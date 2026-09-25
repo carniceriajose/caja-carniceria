@@ -1,0 +1,19 @@
+# Secretos y datos locales
+.env
+*.db
+*.sqlite3
+certificados/
+
+# Repo aparte (frontend), no se versiona desde acá
+/caja-carniceria/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editor / sistema
+.vscode/
+.idea/
+Thumbs.db
