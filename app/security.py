@@ -1,7 +1,9 @@
 import math
+import secrets
 import threading
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 
 import jwt
@@ -34,23 +36,59 @@ def necesita_rehash(hash_guardado: str) -> bool:
 
 
 ALGORITMO = "HS256"
+MINUTOS_TOKEN_PARCIAL = 5  # el paso intermedio del login con segundo factor
+
+# Alfabeto sin caracteres ambiguos (0/O, 1/I/L) para que se puedan transcribir a mano.
+_ALFABETO_RECUPERACION = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+CANTIDAD_CODIGOS_RECUPERACION = 8
 
 
-def crear_token(usuario: Usuario) -> str:
+def generar_codigos_recuperacion(cantidad: int = CANTIDAD_CODIGOS_RECUPERACION) -> list[str]:
+    """Códigos de un solo uso para cuando se pierde el celular con el 2FA.
+    Se muestran una sola vez, en texto plano, al activar el segundo factor."""
+    return [
+        "".join(secrets.choice(_ALFABETO_RECUPERACION) for _ in range(10))
+        for _ in range(cantidad)
+    ]
+
+
+def normalizar_codigo_recuperacion(codigo: str) -> str:
+    return codigo.strip().upper().replace("-", "").replace(" ", "")
+
+
+def _minutos_de_sesion(usuario: Usuario) -> int:
+    settings = get_settings()
+    return settings.jwt_minutos_admin if usuario.rol == "admin" else settings.jwt_minutos_vendedor
+
+
+def crear_token(usuario: Usuario, *, parcial: bool = False) -> str:
+    """`parcial=True` arma un token de corta duración que solo sirve para
+    /auth/2fa/verificar: get_usuario_actual lo rechaza para todo lo demás."""
     settings = get_settings()
     ahora = datetime.now(timezone.utc)
+    minutos = MINUTOS_TOKEN_PARCIAL if parcial else _minutos_de_sesion(usuario)
     datos = {
         "sub": str(usuario.id),
         "rol": usuario.rol,
         "ver": usuario.token_version,
         "iat": ahora,
-        "exp": ahora + timedelta(minutes=settings.jwt_minutos),
+        "exp": ahora + timedelta(minutes=minutos),
     }
+    if parcial:
+        datos["parcial"] = True
     return jwt.encode(datos, settings.jwt_secret, algorithm=ALGORITMO)
 
 
-def leer_token(token: str) -> tuple[int, int]:
-    """Devuelve (id_usuario, token_version). Lanza jwt.InvalidTokenError si no sirve."""
+@dataclass(frozen=True)
+class TokenInfo:
+    usuario_id: int
+    version: int
+    parcial: bool
+
+
+def leer_token(token: str) -> TokenInfo:
+    """Lanza jwt.InvalidTokenError si el token no sirve (vencido, firma
+    inválida, con un campo con el tipo que no corresponde, etc.)."""
     datos = jwt.decode(
         token,
         get_settings().jwt_secret,
@@ -61,9 +99,10 @@ def leer_token(token: str) -> tuple[int, int]:
     if not isinstance(version, int) or isinstance(version, bool):
         raise jwt.InvalidTokenError("Versión de token inválida")
     try:
-        return int(datos["sub"]), version
+        usuario_id = int(datos["sub"])
     except (ValueError, TypeError):
         raise jwt.InvalidTokenError("Usuario del token inválido") from None
+    return TokenInfo(usuario_id=usuario_id, version=version, parcial=bool(datos.get("parcial", False)))
 
 
 # Toda la carnicería sale a internet por la misma IP: el límite por IP es más alto

@@ -5,12 +5,12 @@ os.environ["JWT_SECRET"] = "clave-solo-para-pruebas-0123456789abcdef"
 os.environ["DATABASE_URL"] = "sqlite://"
 os.environ["ENTORNO"] = "desarrollo"
 os.environ["CORS_ORIGENES"] = "http://localhost:5173"
-os.environ["JWT_MINUTOS"] = "720"
+os.environ["JWT_MINUTOS_ADMIN"] = "120"
+os.environ["JWT_MINUTOS_VENDEDOR"] = "720"
 os.environ["ARCA_TAREAS_DE_FONDO"] = "false"
 os.environ["ARCA_CUIT"] = "20000000001"
 os.environ["ARCA_PUNTO_VENTA"] = "1"
 os.environ["ARCA_TIPO_COMPROBANTE"] = "11"
-os.environ["ARCA_ALICUOTA_IVA"] = "21"
 os.environ["ARCA_RAZON_SOCIAL"] = "Carnicería de prueba"
 os.environ["ARCA_DOMICILIO"] = "Calle Falsa 123, Localidad"
 os.environ["ARCA_CONDICION_IVA"] = "Responsable Inscripto"
@@ -33,7 +33,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.db import crear_motor, get_db  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import Base, CategoriaGasto, Gasto, Usuario, Venta  # noqa: E402
+from app.models import Base, CategoriaGasto, Gasto, Rubro, Tarjeta, Usuario, Venta  # noqa: E402
 from app.security import hashear_password, limitador  # noqa: E402
 from tests.utiles import PASSWORD_ADMIN, con_token  # noqa: E402
 
@@ -62,6 +62,30 @@ def cliente(sesion_pruebas, monkeypatch):
     # pedido ya se cerró); tiene que apuntar a la misma base que el resto del test.
     monkeypatch.setattr("app.routers.ventas.SesionLocal", sesion_pruebas)
     limitador.reiniciar()
+    # Una tarjeta de prueba, siempre con id 1: así una venta en "tarjeta" no
+    # necesita que cada test cree la suya para poder elegir una. Lo mismo con
+    # dos rubros (los mismos que siembra la migración real): "Carne" (id 1,
+    # predeterminado) y "Embutidos" (id 2).
+    with sesion_pruebas() as db:
+        db.add(
+            Tarjeta(
+                id=1, nombre="Tarjeta de prueba", tipo="credito", recargo_porcentaje=Decimal("0"),
+                activa=True, orden=1,
+            )
+        )
+        db.add(
+            Rubro(
+                id=1, nombre="Carne", alicuota=Decimal("10.5"), descripcion_factura="Venta de carne",
+                activo=True, orden=1, es_predeterminado=True,
+            )
+        )
+        db.add(
+            Rubro(
+                id=2, nombre="Embutidos", alicuota=Decimal("21"), descripcion_factura="Venta de embutidos",
+                activo=True, orden=2, es_predeterminado=False,
+            )
+        )
+        db.commit()
     yield TestClient(app)
     app.dependency_overrides.clear()
     limitador.reiniciar()
@@ -104,13 +128,41 @@ def crear_venta_db(sesion_pruebas):
         cae=None,
         cae_vencimiento=None,
         respuesta_fiscal=None,
+        subtotal=None,
+        ajuste_tipo=None,
+        ajuste_origen=None,
+        ajuste_monto=None,
+        ajuste_detalle=None,
+        tarjeta_id=None,
+        tarjeta_nombre=None,
+        tarjeta_recargo_porcentaje=None,
+        tarjeta_tipo=None,
+        rubro_id=None,
+        rubro_nombre=None,
+        descripcion_factura=None,
+        alicuota_iva=None,
     ):
         if estado_arca == "fallo" and error_detalle is None:
             error_detalle = "Error de prueba."
         with sesion_pruebas() as db:
             venta = Venta(
                 id_cliente=uuid.uuid4(),
+                subtotal=Decimal(subtotal) if subtotal is not None else Decimal(total),
                 total=Decimal(total),
+                ajuste_tipo=ajuste_tipo,
+                ajuste_origen=ajuste_origen,
+                ajuste_monto=Decimal(ajuste_monto) if ajuste_monto is not None else None,
+                ajuste_detalle=ajuste_detalle,
+                tarjeta_id=tarjeta_id,
+                tarjeta_nombre=tarjeta_nombre,
+                tarjeta_recargo_porcentaje=(
+                    Decimal(tarjeta_recargo_porcentaje) if tarjeta_recargo_porcentaje is not None else None
+                ),
+                tarjeta_tipo=tarjeta_tipo,
+                rubro_id=rubro_id,
+                rubro_nombre=rubro_nombre,
+                descripcion_factura=descripcion_factura,
+                alicuota_iva=Decimal(alicuota_iva) if alicuota_iva is not None else None,
                 medio_pago=medio_pago,
                 vendedor_id=vendedor_id,
                 estado_arca=estado_arca,
@@ -127,6 +179,44 @@ def crear_venta_db(sesion_pruebas):
             db.add(venta)
             db.commit()
             return venta.id
+
+    return _crear
+
+
+@pytest.fixture()
+def crear_tarjeta_db(sesion_pruebas):
+    def _crear(nombre, recargo_porcentaje="0", activa=True, orden=1, tipo="credito"):
+        with sesion_pruebas() as db:
+            tarjeta = Tarjeta(
+                nombre=nombre, tipo=tipo, recargo_porcentaje=Decimal(recargo_porcentaje), activa=activa, orden=orden
+            )
+            db.add(tarjeta)
+            db.commit()
+            return tarjeta.id
+
+    return _crear
+
+
+@pytest.fixture()
+def crear_rubro_db(sesion_pruebas):
+    def _crear(nombre, alicuota="10.5", descripcion_factura=None, activo=True, orden=1, es_predeterminado=False):
+        with sesion_pruebas() as db:
+            if es_predeterminado:
+                anterior = db.query(Rubro).filter_by(es_predeterminado=True).first()
+                if anterior is not None:
+                    anterior.es_predeterminado = False
+                    db.flush()
+            rubro = Rubro(
+                nombre=nombre,
+                alicuota=Decimal(alicuota),
+                descripcion_factura=descripcion_factura or f"Venta de {nombre.lower()}",
+                activo=activo,
+                orden=orden,
+                es_predeterminado=es_predeterminado,
+            )
+            db.add(rubro)
+            db.commit()
+            return rubro.id
 
     return _crear
 

@@ -14,7 +14,21 @@ from app.arca import tareas as arca_tareas
 from app.config import get_settings
 from app.db import get_db, motor
 from app.models import Base
-from app.routers import arca, auth, configuracion, gastos, resumen, usuarios, ventas
+from app.routers import (
+    anulaciones,
+    arca,
+    auditoria,
+    auth,
+    cierres,
+    configuracion,
+    gastos,
+    reportes,
+    resumen,
+    rubros,
+    tarjetas,
+    usuarios,
+    ventas,
+)
 from app.schemas import mensaje_error
 
 settings = get_settings()
@@ -109,3 +123,9 @@ app.include_router(gastos.router_categorias)
 app.include_router(gastos.router)
 app.include_router(resumen.router)
 app.include_router(arca.router)
+app.include_router(auditoria.router)
+app.include_router(anulaciones.router)
+app.include_router(cierres.router)
+app.include_router(reportes.router)
+app.include_router(tarjetas.router)
+app.include_router(rubros.router)

@@ -90,6 +90,7 @@ def _venta_facturada(crear_venta_db, vendedor_id, **extra):
         cae="12345678901234",
         cae_vencimiento=date(2026, 10, 1),
         respuesta_fiscal={"FeDetResp": {"FECAEDetResponse": [{"CbteFch": "20260921", "Resultado": "A"}]}},
+        alicuota_iva="21.00",
     )
     datos.update(extra)
     return crear_venta_db(vendedor_id, "321.00", "tarjeta", **datos)
@@ -113,6 +114,7 @@ def test_comprobante_de_factura_b_trae_todo_lo_del_ticket(cliente, headers_admin
     assert c["total"] == "321.00"
     assert c["cae"] == "12345678901234"
     assert c["cae_vencimiento"] == "2026-10-01"
+    assert c["descripcion_item"] == "Venta de mercadería"
     assert c["qr_url"].startswith(URL_QR + "?p=")
 
 
@@ -121,6 +123,23 @@ def test_factura_b_muestra_el_iva_contenido_que_suma_exacto(cliente, headers_adm
     c = cliente.get(f"/ventas/{venta_id}/comprobante", headers=headers_admin).json()
 
     # alícuota de prueba: 21% -> neto 265.29, IVA 55.71
+    assert Decimal(c["iva_contenido"]) == Decimal("321.00") - Decimal("265.29")
+
+
+def test_el_comprobante_usa_la_descripcion_y_alicuota_del_rubro_congelado(
+    cliente, headers_admin, admin_id, crear_venta_db
+):
+    venta_id = _venta_facturada(
+        crear_venta_db,
+        admin_id,
+        rubro_id=1,
+        rubro_nombre="Embutidos",
+        descripcion_factura="Venta de embutidos",
+        alicuota_iva="21.00",
+    )
+    c = cliente.get(f"/ventas/{venta_id}/comprobante", headers=headers_admin).json()
+
+    assert c["descripcion_item"] == "Venta de embutidos"
     assert Decimal(c["iva_contenido"]) == Decimal("321.00") - Decimal("265.29")
 
 
@@ -143,6 +162,38 @@ def test_el_qr_del_endpoint_coincide_con_el_comprobante(cliente, headers_admin, 
     assert datos["codAut"] == int(c["cae"])
     assert datos["fecha"] == c["fecha"]
     assert Decimal(str(datos["importe"])) == Decimal(c["total"])
+
+
+def test_la_factura_usa_el_total_final_con_neto_e_iva_que_suman_exacto(cliente, headers_admin, admin_id, crear_venta_db):
+    """La venta tiene un recargo ya aplicado (subtotal 300, total 363): el
+    neto y el IVA del comprobante tienen que calcularse sobre el total final
+    cobrado, no sobre el subtotal sin ajustar."""
+    venta_id = crear_venta_db(
+        admin_id,
+        "363.00",
+        "tarjeta",
+        estado_arca="facturada",
+        numero_comprobante=2,
+        tipo_comprobante="6",
+        punto_venta=1,
+        cae="12345678901234",
+        cae_vencimiento=date(2026, 10, 1),
+        respuesta_fiscal={"FeDetResp": {"FECAEDetResponse": [{"CbteFch": "20260921", "Resultado": "A"}]}},
+        subtotal="300.00",
+        ajuste_tipo="recargo",
+        ajuste_origen="medio_pago",
+        ajuste_monto="63.00",
+        ajuste_detalle="Recargo por tarjeta 21,00% (+$ 63,00)",
+        alicuota_iva="21.00",
+    )
+    c = cliente.get(f"/ventas/{venta_id}/comprobante", headers=headers_admin).json()
+
+    assert c["subtotal"] == "300.00"
+    assert c["total"] == "363.00"
+    assert c["ajuste_detalle"] == "Recargo por tarjeta 21,00% (+$ 63,00)"
+    neto = Decimal(c["total"]) - Decimal(c["iva_contenido"])
+    assert neto == Decimal("300.00")
+    assert neto + Decimal(c["iva_contenido"]) == Decimal(c["total"])
 
 
 def test_sin_fecha_de_arca_usa_el_dia_de_la_venta(cliente, headers_admin, admin_id, crear_venta_db):
@@ -184,3 +235,33 @@ def test_el_vendedor_solo_ve_el_comprobante_de_sus_ventas(
     assert cliente.get(f"/ventas/{propia}/comprobante", headers=headers).status_code == 200
     assert cliente.get(f"/ventas/{ajena}/comprobante", headers=headers).status_code == 403
     assert cliente.get(f"/ventas/{propia}/comprobante", headers=otro).status_code == 403
+
+
+def test_el_vendedor_recibe_un_mensaje_neutro_si_esta_pendiente_o_fallo(
+    cliente, crear_usuario, iniciar_sesion, crear_venta_db
+):
+    """Ni el estado interno ni el motivo del error (si lo hay) se le muestran
+    al vendedor: solo un mensaje genérico de "todavía no está"."""
+    vendedor_id = crear_usuario("vende", "clave-vende-1")
+    headers = con_token(iniciar_sesion("vende", "clave-vende-1"))
+
+    pendiente = crear_venta_db(vendedor_id, "100", "tarjeta", estado_arca="pendiente")
+    fallo = crear_venta_db(
+        vendedor_id,
+        "100",
+        "tarjeta",
+        estado_arca="fallo",
+        error_detalle="CUIT del receptor rechazado por ARCA",
+    )
+
+    respuesta_pendiente = cliente.get(f"/ventas/{pendiente}/comprobante", headers=headers)
+    respuesta_fallo = cliente.get(f"/ventas/{fallo}/comprobante", headers=headers)
+
+    assert respuesta_pendiente.status_code == 409
+    assert respuesta_fallo.status_code == 409
+    assert respuesta_pendiente.json()["detail"] == "El comprobante todavía no está disponible."
+    assert respuesta_fallo.json()["detail"] == "El comprobante todavía no está disponible."
+    # El motivo real del error nunca viaja en esta respuesta.
+    assert "ARCA" not in respuesta_fallo.text
+    assert "CUIT" not in respuesta_fallo.text
+    assert "rechazado" not in respuesta_fallo.text

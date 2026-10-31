@@ -56,7 +56,9 @@ pytest
 | --- | --- | --- |
 | `DATABASE_URL` | Base de datos. Si empieza con `postgresql://` se convierte sola para psycopg 3. | `sqlite:///./dev.db` |
 | `JWT_SECRET` | Clave para firmar los tokens. **Obligatoria**, mínimo 32 caracteres. | — |
-| `JWT_MINUTOS` | Duración del token en minutos. | `720` |
+| `JWT_MINUTOS_ADMIN` | Duración del token en minutos, para admin. | `120` |
+| `JWT_MINUTOS_VENDEDOR` | Duración del token en minutos, para vendedor. | `720` |
+| `ANULACION_MINUTOS_VENDEDOR` | Minutos en que el vendedor puede anular su última venta. | `10` |
 | `CORS_ORIGENES` | Orígenes permitidos del frontend, separados por coma. | `http://localhost:5173` |
 | `ENTORNO` | `desarrollo` o `produccion`. | `desarrollo` |
 | `ARCA_ENTORNO` | `homologacion` o `produccion`. Define las URLs de WSAA y WSFE. | `homologacion` |

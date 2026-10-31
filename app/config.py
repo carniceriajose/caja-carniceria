@@ -1,4 +1,3 @@
-from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -18,7 +17,13 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./dev.db"
     jwt_secret: str = Field(min_length=32)
-    jwt_minutos: int = Field(default=720, gt=0)
+    # Sesión más corta para admin: menos ventana si dejan la sesión abierta en
+    # el mostrador. El vendedor dura un turno completo.
+    jwt_minutos_admin: int = Field(default=120, gt=0)
+    jwt_minutos_vendedor: int = Field(default=720, gt=0)
+    # Ventana en la que el vendedor puede anular su propia última venta sin
+    # pedirle a un administrador.
+    anulacion_minutos_vendedor: int = Field(default=10, gt=0)
     cors_origenes: str = "http://localhost:5173"
     entorno: Literal["desarrollo", "produccion"] = "desarrollo"
 
@@ -34,7 +39,6 @@ class Settings(BaseSettings):
     arca_key_base64: str | None = None
     arca_punto_venta: int = Field(default=1, gt=0)
     arca_tipo_comprobante: int = 11  # 11 = Factura C, 6 = Factura B
-    arca_alicuota_iva: Decimal = Decimal("21")  # solo se usa con Factura B
     # Datos del emisor que salen impresos en el comprobante (el CUIT es ARCA_CUIT).
     arca_razon_social: str = ""
     arca_domicilio: str = ""

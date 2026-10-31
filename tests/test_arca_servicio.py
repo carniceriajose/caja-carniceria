@@ -7,7 +7,7 @@ from decimal import Decimal
 import pytest
 
 from app.arca import wsaa, wsfe
-from app.arca.servicio import calcular_neto_iva, emitir_factura
+from app.arca.servicio import armar_detalle, calcular_neto_iva, emitir_factura
 from app.models import Venta
 
 TICKET_FALSO = wsaa.TicketInfo(
@@ -23,6 +23,7 @@ def _preparar_arca_basica(monkeypatch):
 def _venta_nueva(vendedor_id, total="100.00", medio_pago="tarjeta"):
     return Venta(
         id_cliente=uuid.uuid4(),
+        subtotal=Decimal(total),
         total=Decimal(total),
         medio_pago=medio_pago,
         vendedor_id=vendedor_id,
@@ -90,6 +91,26 @@ def test_la_plata_siempre_es_decimal_nunca_float():
     neto, iva = calcular_neto_iva(Decimal("100.00"), 6, Decimal("10.5"))
     assert isinstance(neto, Decimal)
     assert isinstance(iva, Decimal)
+
+
+# ---------------------------------------------------------------- Id de alícuota de ARCA (rubros)
+
+
+def test_armar_detalle_usa_el_id_de_alicuota_de_carne_10_5():
+    neto, iva = calcular_neto_iva(Decimal("110.50"), 6, Decimal("10.5"))
+    detalle = armar_detalle(1, "20260101", Decimal("110.50"), neto, iva, 6, Decimal("10.5"))
+    assert detalle["Iva"]["AlicIva"][0]["Id"] == 4
+
+
+def test_armar_detalle_usa_el_id_de_alicuota_de_embutidos_21():
+    neto, iva = calcular_neto_iva(Decimal("121.00"), 6, Decimal("21"))
+    detalle = armar_detalle(1, "20260101", Decimal("121.00"), neto, iva, 6, Decimal("21"))
+    assert detalle["Iva"]["AlicIva"][0]["Id"] == 5
+
+
+def test_armar_detalle_sin_id_de_alicuota_valido_lanza_error():
+    with pytest.raises(ValueError):
+        armar_detalle(1, "20260101", Decimal("100.00"), Decimal("100.00"), Decimal("0.00"), 6, Decimal("15"))
 
 
 # ---------------------------------------------------------------- numeración y bloqueo

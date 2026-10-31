@@ -31,29 +31,17 @@ def _preparar_arca_aprueba_todo(monkeypatch, ultimo_autorizado=10, cae="CAE-100"
 # ---------------------------------------------------------------- GET /ventas/{id}/fiscal
 
 
-def test_vendedor_no_puede_ver_el_estado_fiscal_de_ventas_ajenas(
+def test_vendedor_nunca_ve_el_estado_fiscal_ni_de_ventas_ajenas_ni_propias(
     cliente, crear_usuario, iniciar_sesion, crear_venta_db, admin_id
 ):
-    crear_usuario("otro_vende", "clave-otro-1")
-    venta_ajena_id = crear_venta_db(admin_id, "100", "tarjeta", estado_arca="pendiente")
-    headers = con_token(iniciar_sesion("otro_vende", "clave-otro-1"))
-
-    respuesta = cliente.get(f"/ventas/{venta_ajena_id}/fiscal", headers=headers)
-    assert respuesta.status_code == 403
-
-
-def test_vendedor_puede_ver_el_estado_fiscal_de_su_propia_venta(
-    cliente, crear_usuario, iniciar_sesion, crear_venta_db
-):
     vendedor_id = crear_usuario("vende", "clave-vende-1")
-    venta_id = crear_venta_db(vendedor_id, "100", "tarjeta", estado_arca="pendiente")
+    venta_propia_id = crear_venta_db(vendedor_id, "100", "tarjeta", estado_arca="pendiente")
+    venta_ajena_id = crear_venta_db(admin_id, "100", "tarjeta", estado_arca="pendiente")
     headers = con_token(iniciar_sesion("vende", "clave-vende-1"))
 
-    respuesta = cliente.get(f"/ventas/{venta_id}/fiscal", headers=headers)
-    assert respuesta.status_code == 200
-    cuerpo = respuesta.json()
-    assert cuerpo["estado_arca"] == "pendiente"
-    assert "total" not in cuerpo  # el endpoint fiscal no expone el total ni el medio de pago
+    # El estado fiscal es información administrativa: ni siquiera de su propia venta.
+    assert cliente.get(f"/ventas/{venta_propia_id}/fiscal", headers=headers).status_code == 403
+    assert cliente.get(f"/ventas/{venta_ajena_id}/fiscal", headers=headers).status_code == 403
 
 
 def test_admin_puede_ver_el_estado_fiscal_de_cualquier_venta(
@@ -80,7 +68,7 @@ def test_estado_fiscal_sin_token_da_401(cliente, crear_venta_db, admin_id):
 
 
 def test_post_ventas_factura_en_segundo_plano_y_el_polling_ve_el_resultado(
-    cliente, crear_usuario, iniciar_sesion, monkeypatch
+    cliente, crear_usuario, iniciar_sesion, headers_admin, monkeypatch
 ):
     crear_usuario("vende", "clave-vende-1")
     headers = con_token(iniciar_sesion("vende", "clave-vende-1"))
@@ -89,18 +77,24 @@ def test_post_ventas_factura_en_segundo_plano_y_el_polling_ve_el_resultado(
     creada = cliente.post(
         "/ventas",
         headers=headers,
-        json={"total": "500.00", "medio_pago": "tarjeta", "id_cliente": str(uuid.uuid4())},
+        json={
+            "subtotal": "500.00", "medio_pago": "tarjeta", "tarjeta_id": 1, "rubro_id": 1,
+            "id_cliente": str(uuid.uuid4()),
+        },
     )
     assert creada.status_code == 201
-    assert creada.json()["estado_arca"] == "pendiente"  # la respuesta al vendedor no espera a ARCA
+    assert "estado_arca" not in creada.json()  # el vendedor nunca recibe el dato fiscal
 
-    fiscal = cliente.get(f"/ventas/{creada.json()['id']}/fiscal", headers=headers)
+    # El estado real (para el admin) sí queda facturado.
+    fiscal = cliente.get(f"/ventas/{creada.json()['id']}/fiscal", headers=headers_admin)
     assert fiscal.json()["estado_arca"] == "facturada"
     assert fiscal.json()["cae"] == "CAE-11"
     assert fiscal.json()["numero_comprobante"] == 11
 
 
-def test_venta_en_efectivo_no_dispara_nada_y_queda_no_aplica(cliente, crear_usuario, iniciar_sesion, monkeypatch):
+def test_venta_en_efectivo_no_dispara_nada_y_queda_no_aplica(
+    cliente, crear_usuario, iniciar_sesion, headers_admin, monkeypatch
+):
     crear_usuario("vende", "clave-vende-1")
     headers = con_token(iniciar_sesion("vende", "clave-vende-1"))
 
@@ -112,10 +106,13 @@ def test_venta_en_efectivo_no_dispara_nada_y_queda_no_aplica(cliente, crear_usua
     creada = cliente.post(
         "/ventas",
         headers=headers,
-        json={"total": "500.00", "medio_pago": "efectivo", "id_cliente": str(uuid.uuid4())},
+        json={"subtotal": "500.00", "medio_pago": "efectivo", "rubro_id": 1, "id_cliente": str(uuid.uuid4())},
     )
     assert creada.status_code == 201
-    assert creada.json()["estado_arca"] == "no_aplica"
+    assert "estado_arca" not in creada.json()
+
+    fiscal = cliente.get(f"/ventas/{creada.json()['id']}/fiscal", headers=headers_admin)
+    assert fiscal.json()["estado_arca"] == "no_aplica"
 
 
 # ---------------------------------------------------------------- /facturas/con-error y reintentar

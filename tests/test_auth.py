@@ -28,7 +28,15 @@ def test_login_correcto(cliente, admin_id):
     assert claims["sub"] == str(admin_id)
     assert claims["rol"] == "admin"
     assert claims["ver"] == 0
-    assert claims["exp"] - claims["iat"] == 720 * 60
+    assert claims["exp"] - claims["iat"] == 120 * 60  # admin: sesión más corta
+
+
+def test_login_vendedor_dura_mas_que_admin(cliente, crear_usuario):
+    crear_usuario("vende", "clave-vende-1")
+    respuesta = _login(cliente, "vende", "clave-vende-1")
+
+    claims = jwt.decode(respuesta.json()["token"], get_settings().jwt_secret, algorithms=["HS256"])
+    assert claims["exp"] - claims["iat"] == 720 * 60  # vendedor: un turno completo
 
 
 def test_login_no_distingue_mayusculas_en_el_usuario(cliente, admin_id):

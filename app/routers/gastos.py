@@ -5,6 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auditoria import registrar as registrar_auditoria
 from app.db import get_db
 from app.deps import requerir_admin, validar_rango_de_fechas
 from app.models import CategoriaGasto, Gasto, Usuario
@@ -122,25 +123,57 @@ def crear_gasto(
     if datos.fecha is not None:
         gasto.fecha = datos.fecha
     db.add(gasto)
+    db.flush()
+    registrar_auditoria(
+        db,
+        admin,
+        "gasto.crear",
+        {"gasto_id": gasto.id, "monto": str(gasto.monto), "fecha": str(gasto.fecha)},
+        entidad="gasto",
+        entidad_id=gasto.id,
+    )
     db.commit()
     return gasto
 
 
 @router.put("/{gasto_id}", response_model=GastoOut)
-def actualizar_gasto(gasto_id: int, datos: GastoActualizar, db: Session = Depends(get_db)):
+def actualizar_gasto(
+    gasto_id: int,
+    datos: GastoActualizar,
+    admin: Usuario = Depends(requerir_admin),
+    db: Session = Depends(get_db),
+):
     gasto = _buscar_gasto(db, gasto_id)
     _exigir_categoria(db, datos.categoria_id)
+    anterior = {"monto": str(gasto.monto), "fecha": str(gasto.fecha), "categoria_id": gasto.categoria_id}
     gasto.fecha = datos.fecha
     gasto.monto = datos.monto
     gasto.categoria_id = datos.categoria_id
     gasto.descripcion = datos.descripcion
+    registrar_auditoria(
+        db,
+        admin,
+        "gasto.actualizar",
+        {"gasto_id": gasto.id, "antes": anterior, "despues": {"monto": str(gasto.monto), "fecha": str(gasto.fecha), "categoria_id": gasto.categoria_id}},
+        entidad="gasto",
+        entidad_id=gasto.id,
+    )
     db.commit()
     db.refresh(gasto)
     return gasto
 
 
 @router.delete("/{gasto_id}", status_code=status.HTTP_204_NO_CONTENT)
-def borrar_gasto(gasto_id: int, db: Session = Depends(get_db)):
-    db.delete(_buscar_gasto(db, gasto_id))
+def borrar_gasto(gasto_id: int, admin: Usuario = Depends(requerir_admin), db: Session = Depends(get_db)):
+    gasto = _buscar_gasto(db, gasto_id)
+    registrar_auditoria(
+        db,
+        admin,
+        "gasto.borrar",
+        {"gasto_id": gasto.id, "monto": str(gasto.monto), "fecha": str(gasto.fecha)},
+        entidad="gasto",
+        entidad_id=gasto.id,
+    )
+    db.delete(gasto)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)

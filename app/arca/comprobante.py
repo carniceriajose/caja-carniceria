@@ -8,10 +8,12 @@ import base64
 from datetime import date, datetime, timezone
 from decimal import Decimal
 
-from app.arca.servicio import FACTURA_B, calcular_neto_iva
-from app.config import Settings
+from sqlalchemy.orm import Session
+
+from app.arca.servicio import FACTURA_B, NOTA_CREDITO_B, calcular_neto_iva
 from app.fechas import ZONA
-from app.models import Venta
+from app.models import Anulacion, Configuracion, Venta
+from app.rubros import alicuota_o_predeterminada
 
 URL_QR = "https://www.afip.gob.ar/fe/qr/"
 
@@ -19,6 +21,8 @@ URL_QR = "https://www.afip.gob.ar/fe/qr/"
 TIPOS = {
     6: ("B", "FACTURA B", "006"),
     11: ("C", "FACTURA C", "011"),
+    8: ("B", "NOTA DE CRÉDITO B", "008"),
+    13: ("C", "NOTA DE CRÉDITO C", "013"),
 }
 
 
@@ -56,9 +60,10 @@ def construir_url_qr(
     return f"{URL_QR}?p={codificado}"
 
 
-def _fecha_del_comprobante(venta: Venta) -> date:
-    """La que ARCA registró (CbteFch); si no está, el día de la venta en Argentina."""
-    respuesta = venta.respuesta_fiscal or {}
+def _fecha_desde_respuesta(respuesta_fiscal: dict | None, fecha_reserva: datetime) -> date:
+    """La fecha que ARCA registró (CbteFch); si no está, la fecha de reserva
+    (de la venta, o de la anulación) en hora de Argentina."""
+    respuesta = respuesta_fiscal or {}
     detalles = (respuesta.get("FeDetResp") or {}).get("FECAEDetResponse") or []
     texto = (detalles[0].get("CbteFch") if detalles else None) or (
         (respuesta.get("ResultGet") or {}).get("CbteFch")
@@ -66,52 +71,122 @@ def _fecha_del_comprobante(venta: Venta) -> date:
     if texto and len(str(texto)) == 8:
         texto = str(texto)
         return date(int(texto[0:4]), int(texto[4:6]), int(texto[6:8]))
-    momento = venta.fecha_hora
+    momento = fecha_reserva
     if momento.tzinfo is None:
         momento = momento.replace(tzinfo=timezone.utc)
     return momento.astimezone(ZONA).date()
 
 
-def armar_comprobante(venta: Venta, settings: Settings) -> dict:
-    """Todo lo que necesita el ticket. Solo para ventas ya facturadas."""
-    if venta.estado_arca != "facturada":
-        raise ValueError("La venta todavía no tiene comprobante.")
-
-    tipo = int(venta.tipo_comprobante)
+def _armar_comprobante(
+    *,
+    tipo: int,
+    punto_venta: int,
+    numero: int,
+    subtotal: Decimal,
+    total: Decimal,
+    ajuste_detalle: str | None,
+    cae: str,
+    cae_vencimiento,
+    fecha: date,
+    alicuota_iva: Decimal,
+    descripcion_item: str,
+    configuracion: Configuracion,
+    cuit: str,
+    receptor: str = "Consumidor Final",
+) -> dict:
     letra, nombre, codigo = TIPOS.get(tipo, (str(tipo), f"COMPROBANTE {tipo}", str(tipo).zfill(3)))
-    fecha = _fecha_del_comprobante(venta)
 
     iva_contenido = None
-    if tipo == FACTURA_B:
-        _, iva_contenido = calcular_neto_iva(venta.total, tipo, settings.arca_alicuota_iva)
+    if tipo in (FACTURA_B, NOTA_CREDITO_B):
+        _, iva_contenido = calcular_neto_iva(total, FACTURA_B, alicuota_iva)
 
     return {
         "emisor": {
-            "razon_social": settings.arca_razon_social,
-            "cuit": settings.arca_cuit,
-            "domicilio": settings.arca_domicilio,
-            "condicion_iva": settings.arca_condicion_iva,
-            "inicio_actividades": settings.arca_inicio_actividades,
-            "ingresos_brutos": settings.arca_ingresos_brutos,
+            "razon_social": configuracion.razon_social,
+            "cuit": cuit,
+            "domicilio": configuracion.domicilio,
+            "condicion_iva": configuracion.condicion_iva,
+            "inicio_actividades": configuracion.inicio_actividades.strftime("%d/%m/%Y"),
+            "ingresos_brutos": configuracion.ingresos_brutos or "",
         },
         "nombre": nombre,
         "letra": letra,
         "codigo": codigo,
-        "punto_venta": venta.punto_venta,
-        "numero": venta.numero_comprobante,
+        "punto_venta": punto_venta,
+        "numero": numero,
         "fecha": fecha,
-        "receptor": "Consumidor Final",
-        "total": venta.total,
+        "receptor": receptor,
+        "subtotal": subtotal,
+        "ajuste_detalle": ajuste_detalle,
+        "total": total,
         "iva_contenido": iva_contenido,
-        "cae": venta.cae,
-        "cae_vencimiento": venta.cae_vencimiento,
+        "descripcion_item": descripcion_item,
+        "cae": cae,
+        "cae_vencimiento": cae_vencimiento,
         "qr_url": construir_url_qr(
             fecha=fecha,
-            cuit=settings.arca_cuit,
-            punto_venta=venta.punto_venta,
+            cuit=cuit,
+            punto_venta=punto_venta,
             tipo_comprobante=tipo,
-            numero=venta.numero_comprobante,
-            importe=venta.total,
-            cae=venta.cae,
+            numero=numero,
+            importe=total,
+            cae=cae,
         ),
     }
+
+
+def armar_comprobante(db: Session, venta: Venta, configuracion: Configuracion, cuit: str) -> dict:
+    """Todo lo que necesita el ticket. Solo para ventas ya facturadas.
+
+    La alícuota y la descripción del ítem son las del rubro que se eligió al
+    cobrar (guardadas en la venta), no las que esté configurado hoy: si
+    cambian después, no tienen que afectar a un comprobante ya emitido. Para
+    ventas viejas, de antes de que existieran los rubros, se usa el rubro
+    predeterminado actual y la descripción general de configuración."""
+    if venta.estado_arca != "facturada":
+        raise ValueError("La venta todavía no tiene comprobante.")
+
+    tipo = int(venta.tipo_comprobante)
+    fecha = _fecha_desde_respuesta(venta.respuesta_fiscal, venta.fecha_hora)
+    return _armar_comprobante(
+        tipo=tipo,
+        punto_venta=venta.punto_venta,
+        numero=venta.numero_comprobante,
+        subtotal=venta.subtotal,
+        total=venta.total,
+        ajuste_detalle=venta.ajuste_detalle,
+        cae=venta.cae,
+        cae_vencimiento=venta.cae_vencimiento,
+        fecha=fecha,
+        alicuota_iva=alicuota_o_predeterminada(db, venta.alicuota_iva),
+        descripcion_item=venta.descripcion_factura or configuracion.descripcion_item,
+        configuracion=configuracion,
+        cuit=cuit,
+    )
+
+
+def armar_comprobante_nota_credito(
+    db: Session, anulacion: Anulacion, venta: Venta, configuracion: Configuracion, cuit: str
+) -> dict:
+    """Todo lo que necesita el ticket de la nota de crédito. Solo para
+    anulaciones que ya tienen su nota de crédito emitida. Usa la misma
+    alícuota y descripción que la factura original."""
+    if anulacion.estado != "emitida":
+        raise ValueError("La nota de crédito todavía no está disponible.")
+
+    fecha = _fecha_desde_respuesta(anulacion.respuesta_fiscal, anulacion.fecha_hora)
+    return _armar_comprobante(
+        tipo=anulacion.tipo,
+        punto_venta=anulacion.punto_venta,
+        numero=anulacion.numero,
+        subtotal=venta.subtotal,
+        total=venta.total,
+        ajuste_detalle=venta.ajuste_detalle,
+        cae=anulacion.cae,
+        cae_vencimiento=anulacion.cae_vencimiento,
+        fecha=fecha,
+        alicuota_iva=alicuota_o_predeterminada(db, anulacion.alicuota_iva),
+        descripcion_item=venta.descripcion_factura or configuracion.descripcion_item,
+        configuracion=configuracion,
+        cuit=cuit,
+    )

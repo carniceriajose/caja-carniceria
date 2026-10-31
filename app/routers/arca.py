@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.arca import wsaa, wsfe
 from app.arca.servicio import emitir_factura
+from app.auditoria import registrar as registrar_auditoria
 from app.db import get_db
 from app.deps import requerir_admin
-from app.models import Venta
+from app.models import Usuario, Venta
 from app.schemas import Pagina, VentaOut
 
 logger = logging.getLogger("arca.router")
@@ -35,7 +36,9 @@ def listar_facturas_con_error(
 
 
 @router.post("/ventas/{venta_id}/reintentar-factura", response_model=VentaOut)
-def reintentar_factura(venta_id: int, db: Session = Depends(get_db)):
+def reintentar_factura(
+    venta_id: int, admin: Usuario = Depends(requerir_admin), db: Session = Depends(get_db)
+):
     venta = db.get(Venta, venta_id)
     if venta is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Venta no encontrada.")
@@ -44,6 +47,10 @@ def reintentar_factura(venta_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Esta venta no tiene una factura pendiente de reintentar.",
         )
+    registrar_auditoria(
+        db, admin, "factura.reintentar", {"venta_id": venta.id}, entidad="venta", entidad_id=venta.id
+    )
+    db.commit()
     emitir_factura(db, venta)
     return venta
 

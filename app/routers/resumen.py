@@ -7,8 +7,9 @@ from sqlalchemy.orm import Session
 
 from app.db import get_db
 from app.deps import requerir_admin, validar_rango_de_fechas
+from app.dinero import CERO, redondear as _dinero
 from app.fechas import dia_local, mes_local, rango_utc
-from app.models import CategoriaGasto, Gasto, Venta
+from app.models import Anulacion, CategoriaGasto, Gasto, Venta
 from app.schemas import ResumenOut
 
 router = APIRouter(prefix="/resumen", tags=["resumen"], dependencies=[Depends(requerir_admin)])
@@ -16,12 +17,6 @@ router = APIRouter(prefix="/resumen", tags=["resumen"], dependencies=[Depends(re
 MEDIOS_DE_PAGO = ("efectivo", "tarjeta", "transferencia")
 ESTADOS_FISCALES = ("no_aplica", "pendiente", "facturada", "fallo")
 DIAS_MAXIMOS_PARA_SERIE_DIARIA = 62
-DIAS_MAXIMOS_DEL_RANGO = 3660
-CERO = Decimal("0.00")
-
-
-def _dinero(valor) -> Decimal:
-    return CERO if valor is None else Decimal(valor).quantize(CERO)
 
 
 def _periodos(desde: date, hasta: date, por_mes: bool) -> list[date]:
@@ -35,18 +30,13 @@ def _periodos(desde: date, hasta: date, por_mes: bool) -> list[date]:
     return periodos
 
 
-@router.get("", response_model=ResumenOut)
-def resumen(desde: date, hasta: date, db: Session = Depends(get_db)):
-    validar_rango_de_fechas(desde, hasta)
+def calcular_resumen(db: Session, desde: date, hasta: date) -> dict:
+    """El cálculo puro, reutilizado tanto por GET /resumen como por el reporte
+    en PDF (ver app/reportes/pdf.py)."""
     dias = (hasta - desde).days + 1
-    if dias > DIAS_MAXIMOS_DEL_RANGO:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El rango no puede superar los 10 años.",
-        )
-
     inicio, fin = rango_utc(desde, hasta)
-    ventas_del_periodo = (Venta.fecha_hora >= inicio, Venta.fecha_hora < fin)
+    # Una venta anulada no cuenta como vendida: no debería mover ningún total.
+    ventas_del_periodo = (Venta.fecha_hora >= inicio, Venta.fecha_hora < fin, Venta.anulada.is_(False))
 
     # Todas las sumas se hacen en la base: acá solo llegan los totales ya agrupados.
     por_medio = {medio: (CERO, 0) for medio in MEDIOS_DE_PAGO}
@@ -80,6 +70,53 @@ def resumen(desde: date, hasta: date, db: Session = Depends(get_db)):
         )
     ]
     total_gastos = sum((g["monto"] for g in gastos_por_categoria), CERO)
+
+    # Las anulaciones se cuentan por cuándo se anuló (no por la fecha de la
+    # venta original), igual que un gasto se cuenta por su propia fecha.
+    cantidad_anulaciones, monto_anulaciones = db.execute(
+        select(func.count(), func.sum(Venta.total))
+        .select_from(Anulacion)
+        .join(Venta, Venta.id == Anulacion.venta_id)
+        .where(Anulacion.fecha_hora >= inicio, Anulacion.fecha_hora < fin)
+    ).one()
+    monto_anulaciones = _dinero(monto_anulaciones)
+
+    total_recargos = _dinero(
+        db.scalar(
+            select(func.sum(Venta.ajuste_monto)).where(*ventas_del_periodo, Venta.ajuste_tipo == "recargo")
+        )
+    )
+
+    # El nombre de rubro/tarjeta ya queda congelado en cada venta (ver
+    # app/routers/ventas.py): no hace falta un join, y el desglose sigue
+    # siendo correcto aunque después se renombre o se desactive alguno.
+    ventas_por_rubro = [
+        {"rubro_id": rubro_id, "rubro": nombre or "Sin rubro", "monto": _dinero(monto), "cantidad": cantidad}
+        for rubro_id, nombre, monto, cantidad in db.execute(
+            select(Venta.rubro_id, Venta.rubro_nombre, func.sum(Venta.total), func.count())
+            .where(*ventas_del_periodo)
+            .group_by(Venta.rubro_id, Venta.rubro_nombre)
+            .order_by(func.sum(Venta.total).desc())
+        )
+    ]
+    ventas_por_tarjeta = [
+        {"tarjeta_id": tarjeta_id, "tarjeta": nombre or "Sin tarjeta", "monto": _dinero(monto), "cantidad": cantidad}
+        for tarjeta_id, nombre, monto, cantidad in db.execute(
+            select(Venta.tarjeta_id, Venta.tarjeta_nombre, func.sum(Venta.total), func.count())
+            .where(*ventas_del_periodo, Venta.medio_pago == "tarjeta")
+            .group_by(Venta.tarjeta_id, Venta.tarjeta_nombre)
+            .order_by(func.sum(Venta.total).desc())
+        )
+    ]
+    ventas_por_tipo_tarjeta = [
+        {"tipo": tipo, "monto": _dinero(monto), "cantidad": cantidad}
+        for tipo, monto, cantidad in db.execute(
+            select(Venta.tarjeta_tipo, func.sum(Venta.total), func.count())
+            .where(*ventas_del_periodo, Venta.medio_pago == "tarjeta")
+            .group_by(Venta.tarjeta_tipo)
+            .order_by(func.sum(Venta.total).desc())
+        )
+    ]
 
     por_mes = dias > DIAS_MAXIMOS_PARA_SERIE_DIARIA
     periodo = mes_local(Venta.fecha_hora) if por_mes else dia_local(Venta.fecha_hora)
@@ -123,4 +160,24 @@ def resumen(desde: date, hasta: date, db: Session = Depends(get_db)):
         "gastos_por_categoria": gastos_por_categoria,
         "agrupacion": "mes" if por_mes else "dia",
         "serie": serie,
+        "cantidad_anulaciones": cantidad_anulaciones,
+        "monto_anulaciones": monto_anulaciones,
+        "total_recargos": total_recargos,
+        "ventas_por_rubro": ventas_por_rubro,
+        "ventas_por_tarjeta": ventas_por_tarjeta,
+        "ventas_por_tipo_tarjeta": ventas_por_tipo_tarjeta,
     }
+
+
+DIAS_MAXIMOS_DEL_RANGO = 3660
+
+
+@router.get("", response_model=ResumenOut)
+def resumen(desde: date, hasta: date, db: Session = Depends(get_db)):
+    validar_rango_de_fechas(desde, hasta)
+    if (hasta - desde).days + 1 > DIAS_MAXIMOS_DEL_RANGO:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="El rango no puede superar los 10 años.",
+        )
+    return calcular_resumen(db, desde, hasta)

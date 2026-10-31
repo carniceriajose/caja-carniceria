@@ -15,6 +15,7 @@ from app.config import get_settings
 from app.db import SesionLocal, motor
 from app.fechas import hoy_argentina
 from app.models import Base
+from app.rubros import obtener_rubro_predeterminado
 
 
 def main() -> int:
@@ -57,10 +58,17 @@ def main() -> int:
         numero = ultimo + 1
         print(f"Último autorizado: {ultimo}. Se va a pedir el número {numero}.")
 
+        rubro = obtener_rubro_predeterminado(db)
+        if rubro is None:
+            print("No hay un rubro predeterminado cargado (correr las migraciones de supabase).")
+            return 1
+        alicuota = rubro.alicuota
+        print(f"Rubro predeterminado: {rubro.nombre} ({alicuota}%)")
+
         total = Decimal("100.00")
-        neto, iva = calcular_neto_iva(total, tipo, settings.arca_alicuota_iva)
+        neto, iva = calcular_neto_iva(total, tipo, alicuota)
         fecha = hoy_argentina().strftime("%Y%m%d")
-        detalle = armar_detalle(numero, fecha, total, neto, iva, tipo, settings.arca_alicuota_iva)
+        detalle = armar_detalle(numero, fecha, total, neto, iva, tipo, alicuota)
         print(f"\nTotal: {total}  Neto: {neto}  IVA: {iva}")
 
         print("\n--- FECAESolicitar: emitiendo la factura de prueba ---")

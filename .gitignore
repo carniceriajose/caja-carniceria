@@ -17,3 +17,6 @@ __pycache__/
 .vscode/
 .idea/
 Thumbs.db
+
+# Configuración local de Claude Code
+.claude/

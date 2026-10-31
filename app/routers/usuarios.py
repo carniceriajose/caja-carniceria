@@ -3,9 +3,10 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.auditoria import registrar as registrar_auditoria
 from app.db import get_db
 from app.deps import requerir_admin
-from app.models import Usuario
+from app.models import CodigoRecuperacion2FA, Usuario
 from app.schemas import PasswordIn, UsuarioActualizar, UsuarioCrear, UsuarioOut
 from app.security import hashear_password
 
@@ -25,7 +26,7 @@ def listar_usuarios(db: Session = Depends(get_db)):
 
 
 @router.post("", response_model=UsuarioOut, status_code=status.HTTP_201_CREATED)
-def crear_usuario(datos: UsuarioCrear, db: Session = Depends(get_db)):
+def crear_usuario(datos: UsuarioCrear, actual: Usuario = Depends(requerir_admin), db: Session = Depends(get_db)):
     usuario = Usuario(
         nombre=datos.nombre,
         usuario=datos.usuario,
@@ -34,13 +35,22 @@ def crear_usuario(datos: UsuarioCrear, db: Session = Depends(get_db)):
     )
     db.add(usuario)
     try:
-        db.commit()
+        db.flush()  # para tener el id del nuevo usuario antes del commit
     except IntegrityError:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Ya existe un usuario con ese nombre de usuario.",
         ) from None
+    registrar_auditoria(
+        db,
+        actual,
+        "usuario.crear",
+        {"usuario_afectado": usuario.usuario, "rol": usuario.rol},
+        entidad="usuario",
+        entidad_id=usuario.id,
+    )
+    db.commit()
     return usuario
 
 
@@ -77,6 +87,14 @@ def actualizar_usuario(
                 detail="Tiene que quedar al menos un administrador activo.",
             )
 
+    cambios = {}
+    if datos.nombre is not None and datos.nombre != usuario.nombre:
+        cambios["nombre"] = {"antes": usuario.nombre, "despues": datos.nombre}
+    if nuevo_rol != usuario.rol:
+        cambios["rol"] = {"antes": usuario.rol, "despues": nuevo_rol}
+    if nuevo_activo != usuario.activo:
+        cambios["activo"] = {"antes": usuario.activo, "despues": nuevo_activo}
+
     cambia_el_acceso = nuevo_rol != usuario.rol or nuevo_activo != usuario.activo
     if datos.nombre is not None:
         usuario.nombre = datos.nombre
@@ -84,14 +102,58 @@ def actualizar_usuario(
     usuario.activo = nuevo_activo
     if cambia_el_acceso:
         usuario.token_version += 1
+    if cambios:
+        registrar_auditoria(
+            db,
+            actual,
+            "usuario.actualizar",
+            {"usuario_afectado": usuario.usuario, "cambios": cambios},
+            entidad="usuario",
+            entidad_id=usuario.id,
+        )
     db.commit()
     return usuario
 
 
 @router.put("/{usuario_id}/password", status_code=status.HTTP_204_NO_CONTENT)
-def cambiar_password(usuario_id: int, datos: PasswordIn, db: Session = Depends(get_db)):
+def cambiar_password(
+    usuario_id: int,
+    datos: PasswordIn,
+    actual: Usuario = Depends(requerir_admin),
+    db: Session = Depends(get_db),
+):
     usuario = _buscar(db, usuario_id)
     usuario.password_hash = hashear_password(datos.password)
     usuario.token_version += 1
+    registrar_auditoria(
+        db,
+        actual,
+        "usuario.resetear_password",
+        {"usuario_afectado": usuario.usuario},
+        entidad="usuario",
+        entidad_id=usuario.id,
+    )
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.put("/{usuario_id}/2fa", status_code=status.HTTP_204_NO_CONTENT)
+def resetear_2fa(
+    usuario_id: int, actual: Usuario = Depends(requerir_admin), db: Session = Depends(get_db)
+):
+    """Apaga el segundo factor de otro usuario: para cuando alguien pierde el
+    celular. No hace falta la contraseña de nadie: ya se está autenticado como admin."""
+    usuario = _buscar(db, usuario_id)
+    usuario.dos_factores_activo = False
+    usuario.dos_factores_secreto = None
+    db.query(CodigoRecuperacion2FA).filter(CodigoRecuperacion2FA.usuario_id == usuario.id).delete()
+    registrar_auditoria(
+        db,
+        actual,
+        "2fa.resetear_por_admin",
+        {"usuario_afectado": usuario.usuario},
+        entidad="usuario",
+        entidad_id=usuario.id,
+    )
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
