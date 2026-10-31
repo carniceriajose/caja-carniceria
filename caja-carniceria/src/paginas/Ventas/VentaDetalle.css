@@ -1,0 +1,147 @@
+.venta-detalle-volver {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.venta-detalle-tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.5rem;
+  max-width: 560px;
+}
+
+.venta-detalle-tarjeta dl {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: 0.6rem 1rem;
+  margin: 0 0 1.25rem;
+}
+
+.venta-detalle-tarjeta dt {
+  color: var(--color-texto-suave);
+}
+
+.venta-detalle-tarjeta dd {
+  margin: 0;
+}
+
+.venta-detalle-monto {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.venta-detalle-error {
+  color: var(--color-error-texto);
+}
+
+.venta-detalle-imprimir {
+  display: inline-block;
+  background: var(--color-primario);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  padding: 0.65rem 1.3rem;
+}
+
+.venta-detalle-imprimir:hover {
+  background: var(--color-primario-oscuro);
+}
+
+.venta-detalle-nota {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.venta-detalle-anular {
+  display: block;
+  margin-top: 1rem;
+  background: var(--color-superficie);
+  color: var(--color-error-texto);
+  border: 1px solid var(--color-error-borde);
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  cursor: pointer;
+}
+
+.venta-detalle-anular:hover {
+  background: var(--color-error-fondo);
+}
+
+.venta-detalle-form-anular {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.venta-detalle-form-anular label {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.venta-detalle-form-anular textarea {
+  font-family: inherit;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  resize: vertical;
+}
+
+.venta-detalle-form-botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.venta-detalle-form-botones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+
+.venta-detalle-form-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.venta-detalle-form-botones button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.venta-detalle-cancelar {
+  background: var(--color-superficie) !important;
+  color: var(--color-texto-suave) !important;
+  border: 1px solid var(--color-borde) !important;
+}
+
+.venta-detalle-resumen-anular {
+  color: var(--color-texto-suave);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.venta-detalle-reintentar {
+  margin-top: 1rem;
+}
+
+.venta-detalle-reintentar button {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+}
+
+.venta-detalle-reintentar button:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.venta-detalle-reintentar button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}

@@ -1,0 +1,268 @@
+:root {
+  --color-fondo: #f3f5f8;
+  --color-superficie: #ffffff;
+  --color-texto: #243449;
+  --color-texto-suave: #718096;
+  --color-borde: #dfe3e9;
+  --color-primario: #861f2d;
+  --color-primario-oscuro: #681923;
+  --color-exito-fondo: #e3f3ea;
+  --color-exito-texto: #16834a;
+  --color-exito-borde: #b7ddc3;
+  --color-error-fondo: #fbeaeb;
+  --color-error-texto: #c43d45;
+  --color-error-borde: #f0b8b8;
+  --color-aviso-fondo: #fff6e0;
+  --color-aviso-texto: #8a6100;
+  --color-aviso-borde: #f0dca0;
+  --color-rosa: #f4e4e6;
+  --color-neutro-fondo: #e9eaee;
+  --color-neutro-texto: #4b5563;
+  --color-categoria-tarjeta: #e08a3e;
+  --color-categoria-tarjeta-fondo: #fbead9;
+  --color-sidebar: #172536;
+  --color-sidebar-texto: #e4e8ee;
+  --color-sidebar-texto-suave: #8d97a8;
+  --radio-tarjeta: 0.75rem;
+  --sombra-tarjeta: 0 1px 3px rgba(16, 24, 40, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+h1 {
+  font-size: 1.7rem;
+  color: var(--color-primario-oscuro);
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-size: 1.05rem;
+  color: var(--color-primario-oscuro);
+  margin: 0 0 1rem;
+}
+
+h3 {
+  margin: 0 0 0.5rem;
+}
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  font-family: inherit;
+  color: var(--color-texto);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  max-width: 100%;
+}
+
+/* Una <select> con una opción de texto largo no tiene por qué agrandar toda
+   su fila: en un filtro (display: flex; flex-wrap: wrap) esto es lo que deja
+   que la etiqueta se achique en vez de forzar el desborde horizontal. */
+label {
+  min-width: 0;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 1px;
+}
+
+input:disabled,
+select:disabled {
+  background: var(--color-fondo);
+  color: var(--color-texto-suave);
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button {
+  font-family: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+/* ---------------------------------------------------------------- botones */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 0.5rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.boton:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.boton-primario {
+  background: var(--color-primario);
+  color: white;
+}
+
+.boton-primario:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.boton-secundario {
+  background: transparent;
+  color: var(--color-texto-suave);
+  border-color: var(--color-borde);
+}
+
+.boton-secundario:hover:not(:disabled) {
+  background: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+.boton-ghost {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  border-color: var(--color-borde);
+}
+
+.boton-ghost:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.boton-peligro {
+  background: transparent;
+  color: var(--color-error-texto);
+  border-color: var(--color-error-borde);
+}
+
+.boton-peligro:hover:not(:disabled) {
+  background: var(--color-error-fondo);
+}
+
+/* ---------------------------------------------------------------- alertas */
+
+.alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  border: 1px solid;
+  border-radius: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.88rem;
+}
+
+.alerta-exito {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+  border-color: var(--color-exito-borde);
+}
+
+.alerta-aviso {
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso-texto);
+  border-color: var(--color-aviso-borde);
+}
+
+.alerta-error {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+  border-color: var(--color-error-borde);
+}
+
+/* ---------------------------------------------------------------- filtros */
+
+.filtro-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.filtro-fila label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+/* ---------------------------------------------------------------- tabla apilable (mobile) */
+/* En celular la tabla no entra: cada fila pasa a verse como una tarjetita
+   apilada, con el nombre de cada columna al lado del valor (vía data-label). */
+@media (max-width: 640px) {
+  .tabla-apilable table {
+    min-width: 0;
+  }
+
+  .tabla-apilable thead {
+    display: none;
+  }
+
+  .tabla-apilable tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .tabla-apilable tr {
+    display: block;
+    border: 1px solid var(--color-borde);
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .tabla-apilable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.3rem 0;
+    border-bottom: none;
+  }
+
+  .tabla-apilable td[data-label]:not([data-label=""])::before {
+    content: attr(data-label);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-texto-suave);
+    flex-shrink: 0;
+  }
+
+  .tabla-apilable td[data-label=""] {
+    justify-content: flex-end;
+  }
+}

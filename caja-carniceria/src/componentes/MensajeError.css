@@ -1,0 +1,28 @@
+.mensaje-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+  border: 1px solid var(--color-error-borde);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.mensaje-error-boton {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--color-error-texto);
+  color: var(--color-error-texto);
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.mensaje-error-boton:hover {
+  background: var(--color-error-texto);
+  color: white;
+}

@@ -1,0 +1,67 @@
+.auditoria h1 {
+  margin-bottom: 0.25rem;
+}
+
+.auditoria-subtitulo {
+  color: var(--color-texto-suave);
+  margin-top: 0;
+}
+
+.auditoria-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.auditoria-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.auditoria-tabla {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+.auditoria-vacio {
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.auditoria-detalle {
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.auditoria-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.auditoria-paginado button {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.auditoria-paginado button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

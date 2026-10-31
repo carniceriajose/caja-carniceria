@@ -1,0 +1,49 @@
+.comprobante-pantalla {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.comprobante-acciones {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.comprobante-acciones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1.4rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.comprobante-acciones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.comprobante-acciones button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.comprobante-acciones .comprobante-boton-secundario {
+  background: transparent;
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+}
+
+.comprobante-ayuda {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.comprobante-hoja {
+  border: 1px solid var(--color-borde);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: white;
+  padding: 0.5rem 0;
+}

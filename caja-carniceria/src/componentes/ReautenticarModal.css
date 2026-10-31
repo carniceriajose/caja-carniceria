@@ -1,0 +1,81 @@
+.reautenticar-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.reautenticar-tarjeta {
+  background: var(--color-superficie);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.reautenticar-tarjeta h2 {
+  margin: 0 0 0.5rem;
+  color: var(--color-primario-oscuro);
+  font-size: 1.15rem;
+}
+
+.reautenticar-tarjeta p {
+  margin: 0 0 1rem;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.reautenticar-tarjeta label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  margin-bottom: 0.3rem;
+}
+
+.reautenticar-tarjeta input {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.reautenticar-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.reautenticar-botones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.reautenticar-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.reautenticar-botones button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.reautenticar-secundario {
+  background: transparent !important;
+  color: var(--color-texto-suave) !important;
+}
+
+.reautenticar-secundario:hover {
+  color: var(--color-texto) !important;
+}

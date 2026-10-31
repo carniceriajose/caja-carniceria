@@ -1,0 +1,98 @@
+.grafico-dona {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Paleta categórica: mismo orden y mismos colores en todos los gráficos.
+   La regla va compuesta con la clase del segmento para no pisar el "serie-N"
+   de otro gráfico (por ejemplo, acá es "stroke"; en las barras es "fill"). */
+.grafico-dona-segmento.serie-1 {
+  stroke: var(--color-exito-texto);
+}
+.grafico-dona-segmento.serie-2 {
+  stroke: var(--color-categoria-tarjeta);
+}
+.grafico-dona-segmento.serie-3 {
+  stroke: var(--color-primario);
+}
+
+.grafico-dona-pista {
+  stroke: var(--color-borde);
+}
+
+.grafico-dona-segmento {
+  stroke-linecap: round;
+}
+
+.grafico-dona-texto-total {
+  /* el tamaño lo pone el atributo font-size en el SVG, según el largo del número */
+  font-weight: 700;
+  fill: var(--color-texto);
+}
+
+.grafico-dona-texto-etiqueta {
+  font-size: 0.7rem;
+  fill: var(--color-texto-suave);
+}
+
+.grafico-dona-vacio {
+  color: var(--color-texto-suave);
+  padding: 1rem 0;
+}
+
+.grafico-dona-leyenda {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 220px;
+}
+
+.grafico-dona-leyenda li {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.grafico-dona-marca {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.grafico-dona-marca.serie-1 {
+  background: var(--color-exito-texto);
+}
+.grafico-dona-marca.serie-2 {
+  background: var(--color-categoria-tarjeta);
+}
+.grafico-dona-marca.serie-3 {
+  background: var(--color-primario);
+}
+
+.grafico-dona-leyenda-etiqueta {
+  color: var(--color-texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grafico-dona-leyenda-monto {
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.grafico-dona-leyenda-porcentaje {
+  color: var(--color-texto-suave);
+  font-variant-numeric: tabular-nums;
+  min-width: 3ch;
+  text-align: right;
+}

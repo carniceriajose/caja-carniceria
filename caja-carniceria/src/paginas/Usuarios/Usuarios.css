@@ -1,0 +1,211 @@
+.usuarios h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.usuarios-seccion {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+}
+
+.usuarios-seccion h2 {
+  font-size: 1rem;
+  color: var(--color-primario-oscuro);
+}
+
+.usuarios-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.usuarios-formulario-fila {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.usuarios-formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  flex: 1;
+  min-width: 160px;
+}
+
+.usuarios-formulario input,
+.usuarios-formulario select {
+  padding: 0.55rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.usuarios-formulario input:disabled,
+.usuarios-formulario select:disabled {
+  background: var(--color-fondo);
+  color: var(--color-texto-suave);
+}
+
+.usuarios-formulario-botones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.usuarios-formulario-botones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.usuarios-formulario-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.usuarios-formulario-botones button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.usuarios-boton-secundario {
+  background: transparent !important;
+  color: var(--color-texto) !important;
+  border: 1px solid var(--color-borde) !important;
+}
+
+.usuarios-estado {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+}
+
+.usuarios-estado-activo {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.usuarios-estado-inactivo {
+  background: var(--color-fondo);
+  color: var(--color-texto-suave);
+}
+
+.usuarios-acciones {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  white-space: nowrap;
+}
+
+.usuarios-acciones button {
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.usuarios-acciones button:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.usuarios-acciones button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.usuarios-boton-desactivar {
+  color: var(--color-error-texto);
+  border-color: var(--color-error-borde) !important;
+}
+
+.usuarios-boton-desactivar:hover:not(:disabled) {
+  background: var(--color-error-fondo) !important;
+}
+
+.usuarios-fila-detalle td {
+  background: var(--color-fondo);
+  padding: 1rem;
+}
+
+.usuarios-restablecer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 320px;
+}
+
+.usuarios-restablecer label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.usuarios-restablecer input {
+  padding: 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+}
+
+.usuarios-2fa-estado {
+  color: var(--color-texto-suave);
+  margin-bottom: 0.75rem;
+}
+
+.usuarios-2fa-activo {
+  color: var(--color-exito-texto);
+  font-weight: 600;
+}
+
+.usuarios-2fa-configurar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 320px;
+}
+
+.usuarios-2fa-configurar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.usuarios-2fa-secreto {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  word-break: break-all;
+}
+
+.usuarios-2fa-codigos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.5rem;
+  max-width: 480px;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.usuarios-2fa-codigos li {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.5rem;
+  font-variant-numeric: tabular-nums;
+  font-family: monospace;
+  text-align: center;
+}

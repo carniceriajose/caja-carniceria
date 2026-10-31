@@ -1,0 +1,178 @@
+.ventas h1,
+.venta-detalle h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.ventas-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.ventas-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.ventas-filtros input,
+.ventas-filtros select {
+  padding: 0.4rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+}
+
+.ventas-tabla {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+.ventas-vacio {
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.ventas-enlace {
+  color: var(--color-primario);
+  white-space: nowrap;
+}
+
+.ventas-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.ventas-paginado button {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.ventas-paginado button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ventas-numerico {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ventas-insignia-ajuste {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 1rem;
+  font-size: 0.68rem;
+  font-variant-numeric: normal;
+  background: var(--color-rosa);
+  color: var(--color-primario);
+  vertical-align: middle;
+}
+
+.ventas-fila-anulada {
+  opacity: 0.6;
+}
+
+.ventas-texto-anulado {
+  text-decoration: line-through;
+}
+
+.ventas-acciones {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.ventas-boton-anular {
+  background: transparent;
+  color: var(--color-error-texto);
+  border: 1px solid var(--color-error-borde);
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.ventas-boton-anular:hover {
+  background: var(--color-error-fondo);
+}
+
+.ventas-fila-detalle td {
+  background: var(--color-fondo);
+  padding: 1rem;
+}
+
+.ventas-form-anular {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-width: 420px;
+}
+
+.ventas-form-anular label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.ventas-form-anular input {
+  padding: 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+}
+
+.ventas-resumen-anular {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.ventas-form-botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ventas-form-botones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+}
+
+.ventas-form-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.ventas-form-botones button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.ventas-boton-secundario {
+  background: transparent !important;
+  color: var(--color-texto-suave) !important;
+  border: 1px solid var(--color-borde) !important;
+}

@@ -1,0 +1,414 @@
+/* ---------------------------------------------------------------- encabezado */
+
+.dashboard-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.dashboard h1 {
+  font-size: 1.7rem;
+  color: var(--color-primario-oscuro);
+  margin: 0 0 0.75rem;
+}
+
+.dashboard-atajos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dashboard-atajos button {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 1rem;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.dashboard-atajos button:hover {
+  border-color: var(--color-primario);
+  color: var(--color-primario);
+}
+
+.dashboard-fechas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.dashboard-descargas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dashboard-descargas button {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.dashboard-descargas button:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.dashboard-descargas button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.dashboard-fechas label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-texto-suave);
+}
+
+.dashboard-fechas input {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  background: var(--color-superficie);
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------- indicadores */
+
+.dashboard-indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-indicador {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.1rem 1.25rem;
+}
+
+.dashboard-indicador-enlace {
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.dashboard-indicador-enlace:hover {
+  border-color: var(--color-primario);
+}
+
+.dashboard-indicador-etiqueta {
+  display: block;
+  font-size: 1.05rem;
+  color: var(--color-texto);
+}
+
+.dashboard-indicador-valor {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.15rem 0;
+}
+
+.dashboard-indicador-detalle {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.dashboard-indicador-icono {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 0.7rem;
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+.dashboard-indicador-ventas {
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.dashboard-indicador-ventas .dashboard-indicador-etiqueta,
+.dashboard-indicador-ventas .dashboard-indicador-valor {
+  color: white;
+}
+
+.dashboard-indicador-ventas .dashboard-indicador-detalle {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.dashboard-indicador-ventas .dashboard-indicador-icono {
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
+}
+
+.dashboard-indicador-positivo .dashboard-indicador-etiqueta,
+.dashboard-indicador-positivo .dashboard-indicador-valor {
+  color: var(--color-exito-texto);
+}
+
+.dashboard-indicador-positivo .dashboard-indicador-icono {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.dashboard-indicador-negativo .dashboard-indicador-etiqueta,
+.dashboard-indicador-negativo .dashboard-indicador-valor {
+  color: var(--color-error-texto);
+}
+
+.dashboard-indicador-negativo .dashboard-indicador-icono {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+}
+
+/* ---------------------------------------------------------------- paneles */
+
+.dashboard-grilla {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-panel {
+  min-width: 0;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.25rem;
+}
+
+.dashboard-panel h2 {
+  font-size: 1.05rem;
+  color: var(--color-primario-oscuro);
+  margin: 0;
+}
+
+.dashboard-panel-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-panel-titulo-icono {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 0.6rem;
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+.dashboard-panel-titulo-sinmargen {
+  margin-bottom: 0;
+}
+
+.dashboard-panel-subtitulo {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+/* ---------------------------------------------------------------- tablas */
+
+.dashboard-tabla {
+  font-size: 0.92rem;
+}
+
+.dashboard-tabla th {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.dashboard-tabla td {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+/* Con montos grandes, esta tabla no entra en una pantalla angosta: en vez de
+   apretar las columnas (y desbordar la página entera), que se deslice sola
+   con el dedo, como cualquier tabla de datos densa en mobile. */
+.dashboard-tabla-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dashboard-tabla-compacta {
+  font-size: 0.8rem;
+  min-width: 420px;
+}
+
+.dashboard-tabla-compacta td,
+.dashboard-tabla-compacta th {
+  white-space: nowrap;
+}
+
+.dashboard-tabla-compacta th,
+.dashboard-tabla-compacta td {
+  padding: 0.4rem 0.35rem;
+}
+
+.dashboard-numerico {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-celda-icono {
+  width: 48px;
+}
+
+.dashboard-icono-medio {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+}
+
+.dashboard-icono-efectivo {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.dashboard-icono-tarjeta {
+  background: var(--color-categoria-tarjeta-fondo);
+  color: var(--color-categoria-tarjeta);
+}
+
+.dashboard-icono-transferencia {
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+/* ---------------------------------------------------------------- insignias de estado */
+
+.dashboard-insignia {
+  display: inline-block;
+  padding: 0.15rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.dashboard-insignia-no_aplica {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+}
+
+.dashboard-insignia-pendiente {
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso-texto);
+}
+
+.dashboard-insignia-facturada {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.dashboard-insignia-fallo {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+}
+
+.dashboard-insignia-enlace:hover {
+  filter: brightness(0.95);
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------- paginado de la tabla diaria */
+
+.dashboard-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.dashboard-paginado button {
+  width: 1.9rem;
+  height: 1.9rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dashboard-paginado button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grilla {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------- "Por día" interactivo */
+
+.dashboard-panel-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-panel-encabezado h2 {
+  margin: 0;
+}
+
+.dashboard-interruptor {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  cursor: pointer;
+}
+
+.dashboard-fila-interactiva {
+  cursor: pointer;
+}
+
+.dashboard-fila-interactiva:hover td,
+.dashboard-fila-activa td {
+  background: rgba(134, 31, 45, 0.08);
+}
+
+.dashboard-vacio {
+  text-align: center;
+  color: var(--color-texto-suave);
+}

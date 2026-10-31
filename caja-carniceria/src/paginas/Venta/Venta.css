@@ -1,0 +1,705 @@
+.caja {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------- encabezado */
+
+.caja-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--color-superficie);
+  border-bottom: 1px solid var(--color-borde);
+  padding: 0.75rem 1.5rem;
+}
+
+.caja-marca {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.caja-marca-nombre {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-primario-oscuro);
+}
+
+.caja-marca-seccion {
+  background: var(--color-rosa);
+  color: var(--color-primario);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.1rem 0.6rem;
+  border-radius: 1rem;
+}
+
+.caja-encabezado-acciones {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.caja-enlace-panel {
+  color: var(--color-primario);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.85rem;
+}
+
+.caja-enlace-panel:hover {
+  background: var(--color-fondo);
+}
+
+.caja-usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-texto-suave);
+  font-size: 0.9rem;
+}
+
+.caja-avatar {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--color-rosa);
+  color: var(--color-primario);
+  font-weight: 700;
+}
+
+.caja-boton-salir {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+}
+
+.caja-boton-salir:hover {
+  background: var(--color-fondo);
+}
+
+/* ---------------------------------------------------------------- estructura */
+
+.caja-contenido {
+  flex: 1;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.caja-cobro {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.caja-columna {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.caja-panel {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.25rem;
+}
+
+.caja-etiqueta {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primario-oscuro);
+  margin-bottom: 0.75rem;
+}
+
+.caja-etiqueta-icono {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+/* ---------------------------------------------------------------- pantalla del monto y teclado */
+
+.caja-monto {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-fondo);
+  border: 2px solid var(--color-borde);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.caja-monto:focus-within {
+  border-color: var(--color-primario);
+}
+
+.caja-monto-signo {
+  font-size: 2rem;
+  color: var(--color-texto-suave);
+}
+
+.caja-monto-entrada {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: right;
+  color: var(--color-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.caja-monto-entrada:focus {
+  outline: none;
+}
+
+.caja-monto-entrada::placeholder {
+  color: var(--color-borde);
+}
+
+.caja-monto-vista {
+  min-height: 1.5rem;
+  margin: 0.5rem 0 1rem;
+  text-align: right;
+  color: var(--color-texto-suave);
+}
+
+.caja-error-campo {
+  color: var(--color-error-texto);
+}
+
+.caja-teclado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.caja-tecla {
+  height: 64px;
+  display: grid;
+  place-items: center;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  cursor: pointer;
+  transition: transform 0.05s ease, background 0.15s ease;
+}
+
+.caja-tecla:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.caja-tecla:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.caja-tecla-borrar {
+  color: var(--color-primario);
+  background: var(--color-rosa);
+  border-color: transparent;
+}
+
+.caja-limpiar {
+  display: block;
+  margin: 0.85rem auto 0;
+  background: none;
+  border: none;
+  color: var(--color-texto-suave);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.caja-limpiar:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------- recargo por medio de pago */
+
+.caja-desglose {
+  margin-top: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-fondo);
+  border-radius: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.caja-desglose-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+.caja-desglose-total {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-texto);
+  border-top: 1px dashed var(--color-borde);
+  padding-top: 0.35rem;
+  margin-top: 0.15rem;
+}
+
+.caja-confirmacion-ajuste {
+  margin: 0 0 0.5rem;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------- tarjeta elegida */
+
+.caja-tarjetas {
+  margin-bottom: 1.25rem;
+}
+
+.caja-tarjetas-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.caja-tarjeta-opcion {
+  padding: 0.5rem 0.9rem;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.caja-tarjeta-opcion:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.caja-tarjeta-opcion-elegida {
+  border-color: var(--color-primario);
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+/* ---------------------------------------------------------------- rubro elegido */
+
+.caja-rubros-opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.caja-rubro-opcion {
+  padding: 0.6rem 1.1rem;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.caja-rubro-opcion:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.caja-rubro-opcion-elegida {
+  border-color: var(--color-primario);
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+/* ---------------------------------------------------------------- medios de pago */
+
+.caja-medios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.caja-medio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.9rem 0.4rem;
+  background: var(--color-superficie);
+  border: 2px solid var(--color-borde);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  color: var(--color-texto);
+}
+
+.caja-medio:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.caja-medio-icono {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 0.75rem;
+}
+
+.caja-medio-nombre {
+  font-weight: 600;
+}
+
+.caja-medio-factura {
+  font-size: 0.72rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 1rem;
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+}
+
+.caja-medio-factura-si {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.caja-medio-efectivo .caja-medio-icono,
+.caja-reciente-icono.caja-medio-efectivo {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.caja-medio-tarjeta .caja-medio-icono,
+.caja-reciente-icono.caja-medio-tarjeta {
+  background: var(--color-categoria-tarjeta-fondo);
+  color: var(--color-categoria-tarjeta);
+}
+
+.caja-medio-transferencia .caja-medio-icono,
+.caja-reciente-icono.caja-medio-transferencia {
+  background: var(--color-rosa);
+  color: var(--color-primario);
+}
+
+.caja-medio-elegido {
+  border-color: var(--color-primario);
+  background: var(--color-rosa);
+}
+
+.caja-medio-elegido:hover:not(:disabled) {
+  background: var(--color-rosa);
+}
+
+/* ---------------------------------------------------------------- botones grandes */
+
+.caja-cobrar {
+  width: 100%;
+  height: 60px;
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.caja-cobrar:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.caja-cobrar:disabled {
+  background: var(--color-borde);
+  color: var(--color-texto-suave);
+  cursor: default;
+}
+
+.caja-imprimir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  height: 48px;
+  margin-bottom: 0.75rem;
+  background: var(--color-superficie);
+  color: var(--color-primario);
+  border: 2px solid var(--color-primario);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.caja-imprimir:hover {
+  background: var(--color-rosa);
+}
+
+/* ---------------------------------------------------------------- resultado de la venta */
+
+.caja-resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.caja-confirmacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.caja-confirmacion-check {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+  margin-bottom: 0.75rem;
+}
+
+.caja-confirmacion-titulo {
+  margin: 0;
+  color: var(--color-exito-texto);
+  font-weight: 600;
+}
+
+.caja-confirmacion-monto {
+  margin: 0.25rem 0 0;
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+
+.caja-confirmacion-medio {
+  margin: 0 0 1rem;
+  color: var(--color-texto-suave);
+}
+
+.caja-fiscal {
+  width: 100%;
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.92rem;
+}
+
+.caja-fiscal p {
+  margin: 0.15rem 0;
+}
+
+.caja-fiscal-nota {
+  background: var(--color-fondo);
+  color: var(--color-texto-suave);
+}
+
+.caja-fiscal-emitiendo {
+  animation: caja-parpadeo 1.4s ease-in-out infinite;
+}
+
+@keyframes caja-parpadeo {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.caja-fiscal-ok {
+  background: var(--color-exito-fondo);
+  border: 1px solid var(--color-exito-borde);
+  color: var(--color-exito-texto);
+}
+
+.caja-fiscal-error {
+  background: var(--color-error-fondo);
+  border: 1px solid var(--color-error-borde);
+  color: var(--color-error-texto);
+}
+
+/* ---------------------------------------------------------------- últimas ventas */
+
+.caja-recientes ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.caja-recientes li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.caja-reciente-icono {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+}
+
+.caja-reciente-datos {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.caja-reciente-monto {
+  font-weight: 600;
+}
+
+.caja-reciente-detalle {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.caja-reciente-enlace {
+  color: var(--color-primario);
+  font-size: 0.85rem;
+}
+
+.caja-insignia {
+  padding: 0.1rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.caja-insignia-no_aplica {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+}
+
+.caja-insignia-pendiente {
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso-texto);
+}
+
+.caja-insignia-facturada {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.caja-insignia-fallo {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+}
+
+.caja-insignia-anulada {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+  text-decoration: line-through;
+}
+
+/* ---------------------------------------------------------------- anular última venta */
+
+.caja-boton-anular {
+  width: 100%;
+  background: transparent;
+  color: var(--color-error-texto);
+  border: 1px solid var(--color-error-borde);
+  border-radius: 0.6rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+}
+
+.caja-boton-anular:hover {
+  background: var(--color-error-fondo);
+}
+
+.caja-form-anular {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.caja-form-anular label {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.caja-form-anular input {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.caja-form-anular-botones {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.caja-form-anular-botones button {
+  flex: 1;
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+  cursor: pointer;
+}
+
+.caja-form-anular-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.caja-form-anular-botones button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.caja-boton-secundario {
+  background: transparent !important;
+  color: var(--color-texto-suave) !important;
+  border: 1px solid var(--color-borde) !important;
+}
+
+@media (max-width: 860px) {
+  .caja-cobro {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .caja-contenido {
+    padding: 1rem;
+  }
+}

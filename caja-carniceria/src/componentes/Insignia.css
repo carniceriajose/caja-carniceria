@@ -1,0 +1,33 @@
+.insignia {
+  display: inline-block;
+  padding: 0.15rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.insignia-no_aplica {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+}
+
+.insignia-pendiente {
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso-texto);
+}
+
+.insignia-facturada {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.insignia-fallo {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+}
+
+.insignia-anulada {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+  text-decoration: line-through;
+}

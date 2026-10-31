@@ -4,9 +4,6 @@
 *.sqlite3
 certificados/
 
-# Repo aparte (frontend), no se versiona desde acá
-/caja-carniceria/
-
 # Python
 .venv/
 __pycache__/
@@ -20,3 +17,7 @@ Thumbs.db
 
 # Configuración local de Claude Code
 .claude/
+
+# Historial de git propio del frontend, antes de combinar los repos (no se versiona)
+.caja-carniceria-git-historial-backup/
+caja-carniceria/.git-historial-propio-backup/

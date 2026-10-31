@@ -1,0 +1,304 @@
+.layout-admin {
+  min-height: 100%;
+  display: flex;
+}
+
+.layout-admin-menu {
+  width: 232px;
+  flex-shrink: 0;
+  background: var(--color-sidebar);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 0.85rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* En escritorio la cabecera no arma su propia fila: el título vuelve a ser
+   hijo directo de la columna, y el botón de hamburguesa queda oculto. */
+.layout-admin-cabecera {
+  display: contents;
+}
+
+.layout-admin-titulo {
+  order: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0.25rem 0.75rem;
+}
+
+.layout-admin-titulo img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: white;
+}
+
+.layout-admin-titulo-texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.layout-admin-titulo-rubro {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-sidebar-texto-suave);
+}
+
+.layout-admin-titulo-nombre {
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.3rem;
+  line-height: 1.15;
+  color: var(--color-sidebar-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.layout-admin-hamburguesa {
+  display: none;
+}
+
+.layout-admin-fondo {
+  display: none;
+}
+
+/* El panel (botón de caja + nav + usuario) también "desaparece" como
+   contenedor en escritorio: cada hijo vuelve a acomodarse en la columna. */
+.layout-admin-panel {
+  display: contents;
+}
+
+.layout-admin-caja {
+  order: 2;
+  display: block;
+  background: var(--color-primario);
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.layout-admin-caja:hover {
+  background: var(--color-primario-oscuro);
+}
+
+.layout-admin-nav {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.layout-admin-enlace {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--color-sidebar-texto-suave);
+  text-decoration: none;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+}
+
+.layout-admin-enlace:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-sidebar-texto);
+}
+
+.layout-admin-enlace.activo {
+  background: var(--color-primario);
+  border-color: var(--color-primario);
+  color: white;
+  font-weight: 600;
+}
+
+.layout-admin-usuario {
+  order: 4;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.9rem;
+}
+
+.layout-admin-usuario-datos {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.25rem;
+}
+
+.layout-admin-usuario-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-sidebar-texto);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.layout-admin-usuario-texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.layout-admin-usuario-nombre {
+  color: var(--color-sidebar-texto);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.layout-admin-usuario-rol {
+  color: var(--color-sidebar-texto-suave);
+  font-size: 0.78rem;
+}
+
+.layout-admin-salir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--color-sidebar-texto-suave);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.layout-admin-salir:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-sidebar-texto);
+}
+
+.layout-admin-contenido {
+  flex: 1;
+  min-width: 0;
+  padding: 1.5rem 1.75rem;
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+  .layout-admin {
+    flex-direction: column;
+  }
+
+  .layout-admin-menu {
+    width: 100%;
+    gap: 0;
+    padding: 0;
+    position: static;
+    height: auto;
+    overflow-y: visible;
+  }
+
+  /* En mobile la cabecera es una fila simple: título y botón de hamburguesa. */
+  .layout-admin-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+  }
+
+  /* Con poco ancho, que el nombre se achique con "…" antes que empujar o
+     tapar el botón de hamburguesa. */
+  .layout-admin-titulo {
+    min-width: 0;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .layout-admin-hamburguesa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.5rem;
+    padding: 0.4rem;
+    color: var(--color-sidebar-texto);
+  }
+
+  .layout-admin-hamburguesa:hover {
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  /* El panel completo (caja + nav + usuario) se despliega como una tarjeta
+     debajo de la cabecera: nada de scroll lateral, todo a la vista en una
+     lista vertical, igual de prolijo que en escritorio. Oculto por defecto. */
+  .layout-admin-panel {
+    display: none;
+  }
+
+  .layout-admin-panel.abierto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0 1rem 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 0.85rem;
+    position: relative;
+    z-index: 6;
+    background: var(--color-sidebar);
+  }
+
+  .layout-admin-nav {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .layout-admin-enlace {
+    padding: 0.65rem 0.7rem;
+  }
+
+  .layout-admin-usuario {
+    margin-top: 0.25rem;
+    padding-top: 0.85rem;
+  }
+
+  /* Tapar el resto de la pantalla mientras el menú está abierto, para poder
+     cerrarlo tocando afuera (patrón estándar de menú desplegable). */
+  .layout-admin-fondo {
+    display: block;
+    position: fixed;
+    inset: 0;
+    top: 56px;
+    background: rgba(0, 0, 0, 0.15);
+    border: none;
+    padding: 0;
+    z-index: 5;
+  }
+
+  .layout-admin-contenido {
+    padding: 1rem;
+  }
+}

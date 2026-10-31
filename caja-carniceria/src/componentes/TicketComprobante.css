@@ -1,0 +1,127 @@
+.ticket {
+  width: 72mm;
+  margin: 0 auto;
+  padding: 3mm;
+  background: white;
+  color: black;
+  font-family: "Courier New", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ticket p {
+  margin: 0.15em 0;
+}
+
+.ticket-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 4px;
+}
+
+.ticket-centrado {
+  text-align: center;
+}
+
+.ticket-razon-social {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ticket-separador {
+  border: none;
+  border-top: 1px dashed black;
+  margin: 6px 0;
+}
+
+.ticket-tipo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ticket-letra {
+  display: inline-block;
+  border: 2px solid black;
+  padding: 0 10px;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ticket-codigo {
+  font-size: 11px;
+}
+
+.ticket-nombre {
+  text-align: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ticket-fila {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ticket-total {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ticket-ajuste {
+  font-size: 11px;
+}
+
+.ticket-transparencia {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.ticket-qr {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 4px;
+  min-height: 150px;
+}
+
+.ticket-pie {
+  font-size: 10px;
+}
+
+/* Solo se ve al imprimir (por ejemplo desde la pantalla de cobro). */
+.ticket-solo-impresion {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .ticket,
+  .ticket * {
+    visibility: visible;
+  }
+
+  .ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    margin: 0;
+    padding: 4mm 4mm 8mm;
+  }
+
+  .ticket-solo-impresion {
+    display: block;
+  }
+}

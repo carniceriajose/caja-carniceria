@@ -1,0 +1,67 @@
+.facturas-con-error h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.facturas-con-error-subtitulo {
+  color: var(--color-texto-suave);
+  margin-top: 0;
+}
+
+.facturas-con-error-vacio {
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.facturas-con-error table {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  overflow: hidden;
+}
+
+.facturas-con-error-motivo {
+  color: var(--color-error-texto);
+  font-size: 0.85rem;
+  max-width: 340px;
+}
+
+.facturas-con-error button {
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.facturas-con-error button:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.facturas-con-error button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.facturas-con-error-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.facturas-con-error-paginado button {
+  background: var(--color-fondo);
+}
+
+.facturas-con-error-numerico {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

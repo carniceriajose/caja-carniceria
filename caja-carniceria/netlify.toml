@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# El sistema usa rutas del lado del cliente (React Router): sin esto, recargar
+# la página en /admin o /venta daría 404 en vez de volver a cargar la app.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

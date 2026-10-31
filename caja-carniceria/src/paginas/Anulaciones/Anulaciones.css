@@ -1,0 +1,134 @@
+.anulaciones h1 {
+  margin-bottom: 0.25rem;
+}
+
+.anulaciones-subtitulo {
+  color: var(--color-texto-suave);
+  margin-top: 0;
+}
+
+.anulaciones-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.anulaciones-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.anulaciones-vacio {
+  color: var(--color-texto-suave);
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.anulaciones-tabla {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+.anulaciones-numerico {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.anulaciones-motivo {
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+  max-width: 260px;
+}
+
+.anulaciones-enlace {
+  color: var(--color-primario);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.anulaciones-enlace:hover {
+  text-decoration: underline;
+}
+
+.anulaciones-estado {
+  display: inline-block;
+  padding: 0.15rem 0.65rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.anulaciones-estado-pendiente {
+  background: var(--color-aviso-fondo);
+  color: var(--color-aviso-texto);
+}
+
+.anulaciones-estado-emitida {
+  background: var(--color-exito-fondo);
+  color: var(--color-exito-texto);
+}
+
+.anulaciones-estado-fallo {
+  background: var(--color-error-fondo);
+  color: var(--color-error-texto);
+}
+
+.anulaciones-estado-sin_comprobante {
+  background: var(--color-neutro-fondo);
+  color: var(--color-neutro-texto);
+}
+
+.anulaciones td button {
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.35rem 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.anulaciones td button:hover:not(:disabled) {
+  background: var(--color-fondo);
+}
+
+.anulaciones td button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.anulaciones-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.anulaciones-paginado button {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.9rem;
+}
+
+.anulaciones-paginado button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

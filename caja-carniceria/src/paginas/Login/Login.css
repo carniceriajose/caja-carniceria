@@ -1,0 +1,97 @@
+.login-pantalla {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-tarjeta {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 2rem;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.login-tarjeta h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.login-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 0.5rem;
+}
+
+.login-logo img {
+  width: 130px;
+  height: 130px;
+}
+
+.login-subtitulo {
+  color: var(--color-texto-suave);
+  margin: 0 0 1.25rem;
+}
+
+.login-tarjeta label {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  margin-bottom: 0.3rem;
+}
+
+.login-tarjeta input {
+  padding: 0.6rem 0.7rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+.login-tarjeta input:focus {
+  outline: 2px solid var(--color-primario);
+  outline-offset: 1px;
+}
+
+.login-tarjeta button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.7rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+
+.login-tarjeta button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.login-tarjeta button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+#login-codigo {
+  text-align: center;
+  font-size: 1.2rem;
+  letter-spacing: 0.25rem;
+  font-variant-numeric: tabular-nums;
+  text-transform: uppercase;
+}
+
+.login-boton-volver {
+  background: transparent !important;
+  color: var(--color-texto-suave) !important;
+  margin-top: 0.35rem !important;
+}
+
+.login-boton-volver:hover:not(:disabled) {
+  color: var(--color-texto) !important;
+}
