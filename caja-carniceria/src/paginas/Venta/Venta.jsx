@@ -395,7 +395,7 @@ export default function Venta() {
     <div className="caja">
       <header className="caja-encabezado">
         <div className="caja-marca">
-          <span className="caja-marca-nombre">Carnicería</span>
+          <span className="caja-marca-nombre">Hipercarnicería</span>
           <span className="caja-marca-seccion">Caja</span>
         </div>
         <div className="caja-encabezado-acciones">

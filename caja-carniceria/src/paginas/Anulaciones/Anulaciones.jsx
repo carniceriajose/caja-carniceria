@@ -8,7 +8,7 @@ import { formatearFechaHora, hoyArgentina } from "../../utilidades/fechas";
 import { ETIQUETA_MEDIO } from "../../utilidades/graficos";
 import "./Anulaciones.css";
 
-const POR_PAGINA = 20;
+const POR_PAGINA = 15;
 
 const ETIQUETA_ESTADO = {
   pendiente: "Emitiendo nota de crédito",

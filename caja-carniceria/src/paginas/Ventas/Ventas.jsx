@@ -10,7 +10,7 @@ import { formatearNumeroComprobante } from "../../utilidades/comprobante";
 import { ETIQUETA_MEDIO } from "../../utilidades/graficos";
 import "./Ventas.css";
 
-const POR_PAGINA = 20;
+const POR_PAGINA = 15;
 
 export default function Ventas() {
   const [desde, setDesde] = useState(rangosRapidos().mes.desde);
@@ -142,7 +142,7 @@ export default function Ventas() {
 
       {!rangoInvertido && !cargando && !error && datos && (
         <>
-          <div className="ventas-tabla">
+          <div className="ventas-tabla tabla-apilable">
             <table>
               <thead>
                 <tr>
@@ -169,31 +169,32 @@ export default function Ventas() {
                   return (
                     <Fragment key={venta.id}>
                       <tr className={venta.anulada ? "ventas-fila-anulada" : ""}>
-                        <td className={venta.anulada ? "ventas-texto-anulado" : ""}>
+                        <td data-label="Fecha" className={venta.anulada ? "ventas-texto-anulado" : ""}>
                           {formatearFechaHora(venta.fecha_hora)}
                         </td>
-                        <td className={venta.anulada ? "ventas-texto-anulado" : ""}>
+                        <td data-label="Vendedor" className={venta.anulada ? "ventas-texto-anulado" : ""}>
                           {nombres[venta.vendedor_id] ?? `#${venta.vendedor_id}`}
                         </td>
-                        <td className={venta.anulada ? "ventas-texto-anulado" : ""}>
+                        <td data-label="Medio" className={venta.anulada ? "ventas-texto-anulado" : ""}>
                           {ETIQUETA_MEDIO[venta.medio_pago]}
                         </td>
                         <td
+                          data-label="Monto"
                           className={`ventas-numerico ${venta.anulada ? "ventas-texto-anulado" : ""}`}
                           title={venta.ajuste_detalle ?? undefined}
                         >
                           {formatearDinero(venta.total)}
                           {venta.ajuste_detalle && <span className="ventas-insignia-ajuste">ajuste</span>}
                         </td>
-                        <td>
+                        <td data-label="Estado fiscal">
                           <Insignia estado={venta.estado_arca} anulada={venta.anulada} />
                         </td>
-                        <td>
+                        <td data-label="Comprobante">
                           {venta.numero_comprobante
                             ? formatearNumeroComprobante(venta.punto_venta, venta.numero_comprobante)
                             : "—"}
                         </td>
-                        <td className="ventas-acciones">
+                        <td data-label="" className="ventas-acciones">
                           <Link to={`/admin/ventas/${venta.id}`} className="ventas-enlace">
                             Ver detalle
                           </Link>

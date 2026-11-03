@@ -28,6 +28,24 @@
   padding: 0.4rem;
   border: 1px solid var(--color-borde);
   border-radius: 0.4rem;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .ventas-filtros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ventas-filtros label,
+  .ventas-filtros input,
+  .ventas-filtros select {
+    width: 100%;
+  }
+
+  .ventas-vacio {
+    width: 100%;
+  }
 }
 
 .ventas-tabla {

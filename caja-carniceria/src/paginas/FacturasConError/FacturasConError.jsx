@@ -7,7 +7,7 @@ import { formatearFechaHora } from "../../utilidades/fechas";
 import "./FacturasConError.css";
 
 const ETIQUETA_MEDIO = { efectivo: "Efectivo", tarjeta: "Tarjeta", transferencia: "Transferencia" };
-const POR_PAGINA = 20;
+const POR_PAGINA = 15;
 
 export default function FacturasConError() {
   const [pagina, setPagina] = useState(1);

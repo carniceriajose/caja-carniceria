@@ -5,7 +5,7 @@ import MensajeError from "../../componentes/MensajeError";
 import { formatearFechaHora, hoyArgentina } from "../../utilidades/fechas";
 import "./Auditoria.css";
 
-const POR_PAGINA = 30;
+const POR_PAGINA = 15;
 
 const ETIQUETA_ACCION = {
   "login.exitoso": "Inició sesión",

@@ -8,7 +8,7 @@ import { formatearDinero } from "../../utilidades/dinero";
 import { formatearFecha, formatearFechaHora, hoyArgentina } from "../../utilidades/fechas";
 import "./CierreCaja.css";
 
-const POR_PAGINA = 20;
+const POR_PAGINA = 15;
 
 // Igual que en la caja: nunca pasa por Number, solo texto sobre centavos.
 function aCentavos(texto) {

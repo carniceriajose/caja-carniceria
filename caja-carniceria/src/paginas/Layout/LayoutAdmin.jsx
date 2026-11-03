@@ -11,7 +11,6 @@ import {
   IconoEngranaje,
   IconoInicio,
   IconoMenu,
-  IconoReloj,
   IconoSalir,
   IconoUsuarios,
 } from "../../componentes/Iconos";
@@ -25,7 +24,6 @@ const ENLACES = [
   { ruta: "/admin/anulaciones", texto: "Anulaciones", Icono: IconoAnular },
   { ruta: "/admin/cierre-caja", texto: "Cierre de caja", Icono: IconoCierreCaja },
   { ruta: "/admin/usuarios", texto: "Usuarios", Icono: IconoUsuarios },
-  { ruta: "/admin/auditoria", texto: "Auditoría", Icono: IconoReloj },
   { ruta: "/admin/configuracion", texto: "Configuración", Icono: IconoEngranaje },
 ];
 
@@ -42,7 +40,7 @@ export default function LayoutAdmin() {
           <span className="layout-admin-titulo">
             <img src="/logo-192.png" alt="El Abasto de José" />
             <span className="layout-admin-titulo-texto">
-              <span className="layout-admin-titulo-rubro">Carnicería</span>
+              <span className="layout-admin-titulo-rubro">Hipercarnicería</span>
               <span className="layout-admin-titulo-nombre">El Abasto de José</span>
             </span>
           </span>

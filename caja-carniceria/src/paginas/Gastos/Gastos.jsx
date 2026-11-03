@@ -9,7 +9,7 @@ import { formatearDinero, totalValido } from "../../utilidades/dinero";
 import { hoyArgentina } from "../../utilidades/fechas";
 import "./Gastos.css";
 
-const POR_PAGINA = 20;
+const POR_PAGINA = 15;
 
 const FORMULARIO_VACIO = { fecha: hoyArgentina(), monto: "", categoria_id: "", descripcion: "" };
 
