@@ -12,58 +12,81 @@
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  background: var(--color-superficie);
-  border-bottom: 1px solid var(--color-borde);
+  background: var(--color-primario);
   padding: 0.75rem 1.5rem;
 }
 
 .caja-marca {
   display: flex;
-  align-items: baseline;
-  gap: 0.6rem;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.caja-marca-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-superficie);
+  object-fit: cover;
 }
 
 .caja-marca-nombre {
   font-weight: 700;
   font-size: 1.15rem;
-  color: var(--color-primario-oscuro);
+  color: white;
 }
 
 .caja-marca-seccion {
-  background: var(--color-rosa);
-  color: var(--color-primario);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.1rem 0.6rem;
+  padding: 0.25rem 0.7rem;
   border-radius: 1rem;
+}
+
+.caja-marca-punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-exito-texto);
 }
 
 .caja-encabezado-acciones {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
 .caja-enlace-panel {
-  color: var(--color-primario);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--color-superficie);
+  color: var(--color-primario-oscuro);
   text-decoration: none;
-  font-size: 0.9rem;
-  border: 1px solid var(--color-borde);
-  border-radius: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.45rem 0.95rem;
 }
 
 .caja-enlace-panel:hover {
-  background: var(--color-fondo);
+  background: var(--color-rosa);
 }
 
 .caja-usuario {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-texto-suave);
+  color: white;
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .caja-avatar {
@@ -72,21 +95,27 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--color-rosa);
-  color: var(--color-primario);
+  background: rgba(255, 255, 255, 0.22);
+  color: white;
   font-weight: 700;
 }
 
 .caja-boton-salir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   background: var(--color-superficie);
-  border: 1px solid var(--color-borde);
-  border-radius: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  color: var(--color-primario-oscuro);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
 }
 
 .caja-boton-salir:hover {
-  background: var(--color-fondo);
+  background: var(--color-rosa);
 }
 
 /* ---------------------------------------------------------------- estructura */
@@ -145,12 +174,11 @@
 
 .caja-monto {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--color-fondo);
-  border: 2px solid var(--color-borde);
-  border-radius: 0.75rem;
-  padding: 0.5rem 1rem;
+  align-items: stretch;
+  background: var(--color-superficie);
+  border: 2px solid color-mix(in srgb, var(--color-primario) 35%, white);
+  border-radius: 0.9rem;
+  overflow: hidden;
 }
 
 .caja-monto:focus-within {
@@ -158,8 +186,14 @@
 }
 
 .caja-monto-signo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 1.1rem;
+  background: var(--color-rosa);
   font-size: 2rem;
-  color: var(--color-texto-suave);
+  font-weight: 700;
+  color: var(--color-primario);
 }
 
 .caja-monto-entrada {
@@ -167,6 +201,7 @@
   min-width: 0;
   border: none;
   background: transparent;
+  padding: 0.5rem 1.1rem;
   font-family: inherit;
   font-size: 3rem;
   font-weight: 700;
@@ -186,7 +221,7 @@
 .caja-monto-vista {
   min-height: 1.5rem;
   margin: 0.5rem 0 1rem;
-  text-align: right;
+  text-align: center;
   color: var(--color-texto-suave);
 }
 
@@ -206,7 +241,8 @@
   place-items: center;
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
+  box-shadow: var(--sombra-tarjeta);
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--color-texto);
@@ -229,13 +265,22 @@
 }
 
 .caja-limpiar {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   margin: 0.85rem auto 0;
-  background: none;
+  background: var(--color-rosa);
   border: none;
-  color: var(--color-texto-suave);
-  text-decoration: underline;
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  color: var(--color-primario);
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
+}
+
+.caja-limpiar:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--color-rosa) 70%, var(--color-primario));
 }
 
 .caja-limpiar:disabled {
@@ -319,10 +364,10 @@
 }
 
 .caja-rubro-opcion {
-  padding: 0.6rem 1.1rem;
+  padding: 0.6rem 1.3rem;
   background: var(--color-superficie);
   border: 2px solid var(--color-borde);
-  border-radius: 0.75rem;
+  border-radius: 2rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-texto);
@@ -335,8 +380,8 @@
 
 .caja-rubro-opcion-elegida {
   border-color: var(--color-primario);
-  background: var(--color-rosa);
-  color: var(--color-primario);
+  background: var(--color-primario);
+  color: white;
 }
 
 /* ---------------------------------------------------------------- medios de pago */
@@ -349,6 +394,7 @@
 }
 
 .caja-medio {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -356,9 +402,23 @@
   padding: 0.9rem 0.4rem;
   background: var(--color-superficie);
   border: 2px solid var(--color-borde);
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
   cursor: pointer;
   color: var(--color-texto);
+}
+
+.caja-medio-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  background: var(--color-primario);
+  color: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.25);
 }
 
 .caja-medio:hover:not(:disabled) {
@@ -421,14 +481,37 @@
 
 .caja-cobrar {
   width: 100%;
-  height: 60px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
   background: var(--color-primario);
   color: white;
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
+  padding: 0.5rem 1rem;
   font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
+}
+
+.caja-cobrar-texto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.25;
+}
+
+.caja-cobrar-titulo {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.caja-cobrar-subtitulo {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .caja-cobrar:hover:not(:disabled) {

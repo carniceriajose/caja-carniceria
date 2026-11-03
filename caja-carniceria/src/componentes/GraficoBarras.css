@@ -126,7 +126,7 @@
 
 .grafico-barras-zona:focus {
   outline: none;
-  fill: rgba(134, 31, 45, 0.08);
+  fill: color-mix(in srgb, var(--color-primario) 8%, transparent);
 }
 
 .grafico-barras-segmento {
@@ -136,7 +136,7 @@
 
 .grafico-barras-grupo:hover .grafico-barras-zona,
 .grafico-barras-activa .grafico-barras-zona {
-  fill: rgba(134, 31, 45, 0.08);
+  fill: color-mix(in srgb, var(--color-primario) 8%, transparent);
 }
 
 .grafico-barras-con-activo .grafico-barras-grupo:not(.grafico-barras-activa) .grafico-barras-segmento {

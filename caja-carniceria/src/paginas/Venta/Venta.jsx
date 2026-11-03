@@ -11,8 +11,12 @@ import {
   IconoBorrar,
   IconoCategorias,
   IconoCheck,
+  IconoCierreCaja,
+  IconoEngranaje,
   IconoImpresora,
+  IconoPapelera,
   IconoReloj,
+  IconoSalir,
   IconoTarjeta,
   IconoTransferencia,
 } from "../../componentes/Iconos";
@@ -395,16 +399,22 @@ export default function Venta() {
     <div className="caja">
       <header className="caja-encabezado">
         <div className="caja-marca">
+          <img src="/logo-192.png" alt="" className="caja-marca-logo" />
           <span className="caja-marca-nombre">Hipercarnicería</span>
-          <span className="caja-marca-seccion">Caja</span>
+          <span className="caja-marca-seccion">
+            <span className="caja-marca-punto" aria-hidden="true" />
+            Caja
+          </span>
         </div>
         <div className="caja-encabezado-acciones">
           {usuario?.rol === "admin" && (
             <>
               <Link to="/admin/cierre-caja" className="caja-enlace-panel">
+                <IconoCierreCaja tamanio={18} />
                 Cerrar caja
               </Link>
               <Link to="/admin" className="caja-enlace-panel">
+                <IconoEngranaje tamanio={18} />
                 Panel de administración
               </Link>
             </>
@@ -416,6 +426,7 @@ export default function Venta() {
             {usuario?.nombre}
           </span>
           <button type="button" className="caja-boton-salir" onClick={cerrarSesion}>
+            <IconoSalir tamanio={18} />
             Cerrar sesión
           </button>
         </div>
@@ -481,6 +492,7 @@ export default function Venta() {
                 onClick={() => alTeclear("limpiar")}
                 disabled={enviando || subtotal === ""}
               >
+                <IconoPapelera tamanio={16} />
                 Limpiar
               </button>
 
@@ -551,6 +563,11 @@ export default function Venta() {
                         onClick={() => setMedioPago(valor)}
                         disabled={enviando}
                       >
+                        {elegido && (
+                          <span className="caja-medio-check" aria-hidden="true">
+                            <IconoCheck tamanio={12} />
+                          </span>
+                        )}
                         <span className="caja-medio-icono">
                           <Icono tamanio={26} />
                         </span>
@@ -603,11 +620,19 @@ export default function Venta() {
                   className="caja-cobrar"
                   disabled={enviando || !montoListo || !rubroId || (medioPago === "tarjeta" && !tarjetaId)}
                 >
-                  {enviando
-                    ? "Cobrando…"
-                    : desglose
-                      ? `Cobrar ${formatearDinero(deCentavos(desglose.totalCent))}`
-                      : "Cobrar"}
+                  {enviando ? (
+                    "Cobrando…"
+                  ) : (
+                    <>
+                      <IconoTarjeta tamanio={22} />
+                      <span className="caja-cobrar-texto">
+                        <span className="caja-cobrar-titulo">
+                          {desglose ? `Cobrar ${formatearDinero(deCentavos(desglose.totalCent))}` : "Cobrar"}
+                        </span>
+                        <span className="caja-cobrar-subtitulo">Confirmar operación</span>
+                      </span>
+                    </>
+                  )}
                 </button>
               </section>
 

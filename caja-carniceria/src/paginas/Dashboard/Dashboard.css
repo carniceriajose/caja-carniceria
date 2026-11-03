@@ -405,7 +405,7 @@
 
 .dashboard-fila-interactiva:hover td,
 .dashboard-fila-activa td {
-  background: rgba(134, 31, 45, 0.08);
+  background: color-mix(in srgb, var(--color-primario) 8%, transparent);
 }
 
 .dashboard-vacio {
