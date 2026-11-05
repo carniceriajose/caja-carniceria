@@ -275,12 +275,13 @@ export default function Configuracion() {
             </label>
           </section>
 
-          <MensajeError mensaje={errorGuardar} />
-          {mensajeGuardado && <p className="configuracion-guardado">{mensajeGuardado}</p>}
-
-          <button type="submit" className="configuracion-boton-guardar" disabled={guardando}>
-            {guardando ? "Guardando…" : "Guardar cambios"}
-          </button>
+          <div className="configuracion-guardar-barra">
+            <button type="submit" className="configuracion-boton-guardar" disabled={guardando}>
+              {guardando ? "Guardando…" : "Guardar cambios"}
+            </button>
+            <MensajeError mensaje={errorGuardar} />
+            {mensajeGuardado && <p className="configuracion-guardado">{mensajeGuardado}</p>}
+          </div>
         </form>
       )}
 
