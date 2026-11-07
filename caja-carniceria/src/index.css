@@ -266,3 +266,12 @@ td {
     justify-content: flex-end;
   }
 }
+
+/* ---------------------------------------------------------------- insignia de netlify */
+/* Intenta ocultar la insignia "Powered by Netlify" del plan gratuito. Si
+   Netlify la aísla en shadow DOM esto no hace nada (no rompe igual). */
+[class*="netlify-badge"],
+#netlify-badge,
+a[href*="netlify.com/?utm_source=badge"] {
+  display: none !important;
+}
