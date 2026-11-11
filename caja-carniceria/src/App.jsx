@@ -15,6 +15,7 @@ import Ventas from "./paginas/Ventas/Ventas";
 import VentaDetalle from "./paginas/Ventas/VentaDetalle";
 import Comprobante from "./paginas/Comprobante/Comprobante";
 import LayoutAdmin from "./paginas/Layout/LayoutAdmin";
+import Compras from "./paginas/Compras/Compras";
 
 export default function App() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
           <Route path="cierre-caja" element={<CierreCaja />} />
           <Route path="configuracion" element={<Configuracion />} />
           <Route path="auditoria" element={<Auditoria />} />
+          {import.meta.env.DEV && <Route path="compras" element={<Compras />} />}
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
