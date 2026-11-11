@@ -60,7 +60,7 @@ export default function App() {
           <Route path="cierre-caja" element={<CierreCaja />} />
           <Route path="configuracion" element={<Configuracion />} />
           <Route path="auditoria" element={<Auditoria />} />
-          {import.meta.env.DEV && <Route path="compras" element={<Compras />} />}
+          <Route path="compras" element={<Compras />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

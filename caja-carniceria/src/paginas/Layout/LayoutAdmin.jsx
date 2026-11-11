@@ -26,9 +26,7 @@ const ENLACES = [
   { ruta: "/admin/cierre-caja", texto: "Cierre de caja", Icono: IconoCierreCaja },
   { ruta: "/admin/usuarios", texto: "Usuarios", Icono: IconoUsuarios },
   { ruta: "/admin/configuracion", texto: "Configuración", Icono: IconoEngranaje },
-  ...(import.meta.env.DEV
-    ? [{ ruta: "/admin/compras", texto: "Compras", Icono: IconoCompras }]
-    : []),
+  { ruta: "/admin/compras", texto: "Compras", Icono: IconoCompras },
 ];
 
 export default function LayoutAdmin() {
