@@ -4,6 +4,7 @@ import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
 import TituloSeccion from "../../componentes/TituloSeccion";
 import { IconoTarjeta } from "../../componentes/Iconos";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 
 function filaDesde(tarjeta) {
   return {
@@ -136,14 +137,16 @@ export default function TarjetasConfiguracion() {
                         />
                       </td>
                       <td data-label="Tipo">
-                        <select
+                        <SelectEstilizado
+                          etiqueta="Tipo"
                           value={fila.tipo}
-                          onChange={(e) => cambiarFila(t.id, "tipo", e.target.value)}
+                          onChange={(valor) => cambiarFila(t.id, "tipo", valor)}
                           disabled={guardandoId === t.id}
-                        >
-                          <option value="credito">Crédito</option>
-                          <option value="debito">Débito</option>
-                        </select>
+                          opciones={[
+                            { valor: "credito", etiqueta: "Crédito" },
+                            { valor: "debito", etiqueta: "Débito" },
+                          ]}
+                        />
                       </td>
                       <td data-label="Recargo (%)">
                         <input
@@ -196,14 +199,16 @@ export default function TarjetasConfiguracion() {
             </label>
             <label>
               Tipo
-              <select
+              <SelectEstilizado
+                etiqueta="Tipo"
                 value={nueva.tipo}
-                onChange={(e) => setNueva((n) => ({ ...n, tipo: e.target.value }))}
+                onChange={(valor) => setNueva((n) => ({ ...n, tipo: valor }))}
                 disabled={agregando}
-              >
-                <option value="credito">Crédito</option>
-                <option value="debito">Débito</option>
-              </select>
+                opciones={[
+                  { valor: "credito", etiqueta: "Crédito" },
+                  { valor: "debito", etiqueta: "Débito" },
+                ]}
+              />
             </label>
             <label>
               Recargo (%)

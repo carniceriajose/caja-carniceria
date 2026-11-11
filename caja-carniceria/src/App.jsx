@@ -5,6 +5,7 @@ import Login from "./paginas/Login/Login";
 import Venta from "./paginas/Venta/Venta";
 import Dashboard from "./paginas/Dashboard/Dashboard";
 import Gastos from "./paginas/Gastos/Gastos";
+import Compras from "./paginas/Compras/Compras";
 import Usuarios from "./paginas/Usuarios/Usuarios";
 import FacturasConError from "./paginas/FacturasConError/FacturasConError";
 import Auditoria from "./paginas/Auditoria/Auditoria";
@@ -53,6 +54,7 @@ export default function App() {
           <Route path="ventas" element={<Ventas />} />
           <Route path="ventas/:id" element={<VentaDetalle />} />
           <Route path="gastos" element={<Gastos />} />
+          <Route path="compras" element={<Compras />} />
           <Route path="usuarios" element={<Usuarios />} />
           <Route path="facturas-con-error" element={<FacturasConError />} />
           <Route path="anulaciones" element={<Anulaciones />} />

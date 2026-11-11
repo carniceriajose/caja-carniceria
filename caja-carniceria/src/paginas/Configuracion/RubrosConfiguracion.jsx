@@ -4,10 +4,11 @@ import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
 import TituloSeccion from "../../componentes/TituloSeccion";
 import { IconoCategorias } from "../../componentes/Iconos";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 
-// El backend siempre las devuelve con 2 decimales exactos: el <select> tiene
-// que ofrecer el mismo formato, para que el valor que viene de la API haga
-// match con una de las opciones.
+// El backend siempre las devuelve con 2 decimales exactos: las opciones
+// tienen que ofrecer el mismo formato, para que el valor que viene de la API
+// haga match con una de ellas.
 const ALICUOTAS = ["0.00", "2.50", "5.00", "10.50", "21.00", "27.00"];
 
 function filaDesde(rubro) {
@@ -154,17 +155,13 @@ export default function RubrosConfiguracion() {
                         />
                       </td>
                       <td data-label="Alícuota">
-                        <select
+                        <SelectEstilizado
+                          etiqueta="Alícuota"
                           value={fila.alicuota}
-                          onChange={(e) => cambiarFila(r.id, "alicuota", e.target.value)}
+                          onChange={(valor) => cambiarFila(r.id, "alicuota", valor)}
                           disabled={guardandoId === r.id}
-                        >
-                          {ALICUOTAS.map((a) => (
-                            <option key={a} value={a}>
-                              {Number(a)}%
-                            </option>
-                          ))}
-                        </select>
+                          opciones={ALICUOTAS.map((a) => ({ valor: a, etiqueta: `${Number(a)}%` }))}
+                        />
                       </td>
                       <td data-label="Descripción">
                         <input
@@ -222,17 +219,13 @@ export default function RubrosConfiguracion() {
             </label>
             <label>
               Alícuota
-              <select
+              <SelectEstilizado
+                etiqueta="Alícuota"
                 value={nueva.alicuota}
-                onChange={(e) => setNueva((n) => ({ ...n, alicuota: e.target.value }))}
+                onChange={(valor) => setNueva((n) => ({ ...n, alicuota: valor }))}
                 disabled={agregando}
-              >
-                {ALICUOTAS.map((a) => (
-                  <option key={a} value={a}>
-                    {Number(a)}%
-                  </option>
-                ))}
-              </select>
+                opciones={ALICUOTAS.map((a) => ({ valor: a, etiqueta: `${Number(a)}%` }))}
+              />
             </label>
             <label>
               Descripción en factura

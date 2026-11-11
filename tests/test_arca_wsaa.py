@@ -42,6 +42,8 @@ def test_se_reutiliza_el_ticket_si_falta_mas_de_diez_minutos(sesion_pruebas, mon
         db.add(
             TicketAcceso(
                 servicio="wsfe",
+                entorno="homologacion",
+                cuit="20000000001",
                 token="tok-vigente",
                 sign="sig-vigente",
                 vence_en=datetime.now(timezone.utc) + timedelta(hours=1),
@@ -62,6 +64,8 @@ def test_se_renueva_si_falta_menos_de_diez_minutos(sesion_pruebas, monkeypatch):
         db.add(
             TicketAcceso(
                 servicio="wsfe",
+                entorno="homologacion",
+                cuit="20000000001",
                 token="tok-viejo",
                 sign="sig-viejo",
                 vence_en=datetime.now(timezone.utc) + timedelta(minutes=5),

@@ -22,6 +22,10 @@ def crear_motor(url: str, **opciones) -> Engine:
     opciones.setdefault("pool_pre_ping", True)
     # Sin sentencias preparadas: el pooler de Supabase en modo transacción no las soporta.
     opciones.setdefault("connect_args", {"prepare_threshold": None})
+    # Si una consulta falla, SQLAlchemy por default muestra los parámetros en
+    # el mensaje de error (quedarían en los logs) — acá puede haber tokens,
+    # signs o contraseñas hasheadas, así que se ocultan siempre.
+    opciones.setdefault("hide_parameters", True)
     return create_engine(url, **opciones)
 
 

@@ -332,6 +332,51 @@ class Gasto(Base):
     categoria: Mapped[CategoriaGasto] = relationship(lazy="joined")
 
 
+class Compra(Base):
+    """Seguimiento de compras por comercio/proveedor, con foto del
+    comprobante. Sin monto: no es parte del resumen financiero (eso es
+    "gastos"), es solo un registro para saber qué se le compró a cada uno."""
+
+    __tablename__ = "compras"
+    __table_args__ = (
+        CheckConstraint(
+            "imagen_tipo in ('image/jpeg', 'image/png', 'image/webp')",
+            name="compras_imagen_tipo_check",
+        ),
+        Index("compras_fecha_idx", "fecha"),
+    )
+
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    fecha: Mapped[date] = mapped_column(Date, default=hoy_argentina)
+    nombre_comercio: Mapped[str] = mapped_column(Text)
+    descripcion: Mapped[str | None] = mapped_column(Text)
+    # Base64 de la imagen: se guarda en la base (no en disco) porque el
+    # servidor corre en un contenedor que no conserva archivos entre
+    # despliegues (Railway/Render).
+    imagen: Mapped[str] = mapped_column(Text)
+    imagen_tipo: Mapped[str] = mapped_column(Text)
+    creado_por: Mapped[int] = mapped_column(ID, ForeignKey("usuarios.id"))
+    creado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=ahora_utc, server_default=func.now()
+    )
+
+
+class ComentarioComercio(Base):
+    """Notas sobre un comercio/proveedor en general (no sobre una compra
+    puntual): se agrupan por el mismo texto de nombre_comercio que usa
+    Compra, sin necesitar una tabla de comercios aparte."""
+
+    __tablename__ = "comentarios_comercio"
+
+    id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
+    nombre_comercio: Mapped[str] = mapped_column(Text)
+    comentario: Mapped[str] = mapped_column(Text)
+    creado_por: Mapped[int] = mapped_column(ID, ForeignKey("usuarios.id"))
+    creado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=ahora_utc, server_default=func.now()
+    )
+
+
 class Auditoria(Base):
     """Quién hizo cada cosa: se graba a mano en cada acción administrativa que
     cambia algo (no en las simples lecturas)."""
@@ -357,13 +402,16 @@ Index("auditoria_usuario_idx", Auditoria.usuario_id)
 
 class TicketAcceso(Base):
     """Ticket de acceso (token + sign) de WSAA. Se guarda en la base y no solo
-    en memoria porque el servidor se reinicia; un solo registro por servicio
-    ('wsfe'), se reemplaza cuando se renueva."""
+    en memoria porque el servidor se reinicia; un registro por (servicio,
+    entorno, cuit) — así cambiar de homologación a producción (o de CUIT)
+    nunca reutiliza por error un ticket de otro entorno."""
 
     __tablename__ = "tickets_acceso"
 
     id: Mapped[int] = mapped_column(ID, primary_key=True, autoincrement=True)
     servicio: Mapped[str] = mapped_column(Text)
+    entorno: Mapped[str] = mapped_column(Text)
+    cuit: Mapped[str] = mapped_column(Text)
     token: Mapped[str] = mapped_column(Text)
     sign: Mapped[str] = mapped_column(Text)
     generado_en: Mapped[datetime] = mapped_column(
@@ -372,7 +420,13 @@ class TicketAcceso(Base):
     vence_en: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
-Index("tickets_acceso_servicio_uq", TicketAcceso.servicio, unique=True)
+Index(
+    "tickets_acceso_servicio_entorno_cuit_uq",
+    TicketAcceso.servicio,
+    TicketAcceso.entorno,
+    TicketAcceso.cuit,
+    unique=True,
+)
 
 
 class Configuracion(Base):

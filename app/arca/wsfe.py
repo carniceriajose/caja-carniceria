@@ -8,6 +8,9 @@ que los pruebas los reemplacen con dobles simples.
 
 import logging
 
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
 from zeep import Client
 from zeep.exceptions import Fault, TransportError
 from zeep.transports import Transport
@@ -28,10 +31,33 @@ class ErrorArca(Exception):
     """ARCA respondió, pero con un problema de negocio (no de red)."""
 
 
+class _AdaptadorCompatibleConArca(HTTPAdapter):
+    """El servidor de WSFEv1 negocia TLS con una clave Diffie-Hellman que las
+    versiones nuevas de OpenSSL rechazan por default (nivel de seguridad 2).
+    Bajarlo a nivel 1 solo habilita cifrados más viejos como opción: si el
+    servidor ofrece algo mejor, lo sigue usando igual. No afecta a WSAA
+    (wsaa.afip.gov.ar), que no tiene este problema."""
+
+    def init_poolmanager(self, *args, **kwargs):
+        contexto = create_urllib3_context(ciphers="DEFAULT@SECLEVEL=1")
+        kwargs["ssl_context"] = contexto
+        return super().init_poolmanager(*args, **kwargs)
+
+
+def _sesion_http(entorno: str) -> requests.Session:
+    sesion = requests.Session()
+    if entorno == "produccion":
+        # Solo producción (servicios1.afip.gov.ar) tiene el DH débil; homologación
+        # (wswhomo.afip.gov.ar) nunca tuvo este problema y queda con la config
+        # de TLS normal, sin bajarle el nivel de seguridad al cifrado.
+        sesion.mount("https://", _AdaptadorCompatibleConArca())
+    return sesion
+
+
 def _cliente() -> Client:
     settings = get_settings()
     url = URLS_WSFE[settings.arca_entorno]
-    transporte = Transport(timeout=30, operation_timeout=30)
+    transporte = Transport(timeout=30, operation_timeout=30, session=_sesion_http(settings.arca_entorno))
     return Client(wsdl=url, transport=transporte)
 
 

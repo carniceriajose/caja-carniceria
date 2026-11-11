@@ -62,6 +62,13 @@ class Pagina(BaseModel, Generic[T]):
     por_pagina: int
 
 
+class PaginaConTotalMonto(Pagina[T], Generic[T]):
+    """Como Pagina, pero con la suma de "total" de todo lo que cumple el
+    filtro (no solo la página visible). No cuenta lo anulado."""
+
+    total_monto: Dinero
+
+
 # ---------------------------------------------------------------- usuarios y login
 
 
@@ -504,6 +511,86 @@ class GastoOut(BaseModel):
     monto: Dinero
     categoria: CategoriaGastoOut
     descripcion: str | None
+    creado_por: int
+    creado_en: FechaHora
+
+
+# ---------------------------------------------------------------- compras
+
+TipoImagen = Literal["image/jpeg", "image/png", "image/webp"]
+
+# ~5 MB en bytes reales; en base64 pesa más, así que el límite del texto es mayor.
+TAMANIO_MAXIMO_IMAGEN_BYTES = 5 * 1024 * 1024
+NombreComercio = Annotated[str, Field(min_length=1, max_length=120)]
+
+
+def _validar_imagen_base64(valor: str) -> str:
+    import base64
+    import binascii
+
+    try:
+        decodificado = base64.b64decode(valor, validate=True)
+    except (binascii.Error, ValueError):
+        raise ValueError("La imagen no es un base64 válido.") from None
+    if len(decodificado) > TAMANIO_MAXIMO_IMAGEN_BYTES:
+        raise ValueError("La imagen no puede pesar más de 5 MB.")
+    if not decodificado:
+        raise ValueError("La imagen no puede estar vacía.")
+    return valor
+
+
+class CompraCrear(BaseModel):
+    fecha: date | None = None  # si no viene, se usa hoy (hora de Argentina)
+    nombre_comercio: NombreComercio
+    descripcion: Descripcion = None
+    imagen: str
+    imagen_tipo: TipoImagen
+
+    _nombre_limpio = field_validator("nombre_comercio", mode="before")(_limpiar_espacios)
+    _descripcion_limpia = field_validator("descripcion", mode="before")(_texto_o_none)
+    _imagen_valida = field_validator("imagen")(_validar_imagen_base64)
+
+
+class CompraActualizar(BaseModel):
+    fecha: date
+    nombre_comercio: NombreComercio
+    descripcion: Descripcion = None
+
+    _nombre_limpio = field_validator("nombre_comercio", mode="before")(_limpiar_espacios)
+    _descripcion_limpia = field_validator("descripcion", mode="before")(_texto_o_none)
+
+
+class CompraOut(BaseModel):
+    """Sin el contenido de la imagen: para eso está GET /compras/{id}/imagen,
+    así el listado no viaja pesado."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    fecha: date
+    nombre_comercio: str
+    descripcion: str | None
+    creado_por: int
+    creado_en: FechaHora
+
+
+Comentario = Annotated[str, Field(min_length=1, max_length=1000)]
+
+
+class ComentarioComercioCrear(BaseModel):
+    nombre_comercio: NombreComercio
+    comentario: Comentario
+
+    _nombre_limpio = field_validator("nombre_comercio", mode="before")(_limpiar_espacios)
+    _comentario_limpio = field_validator("comentario", mode="before")(_limpiar_espacios)
+
+
+class ComentarioComercioOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    nombre_comercio: str
+    comentario: str
     creado_por: int
     creado_en: FechaHora
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { api } from "../../api/cliente";
 import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import { formatearDinero } from "../../utilidades/dinero";
 import { formatearFechaHora, hoyArgentina } from "../../utilidades/fechas";
 import { ETIQUETA_MEDIO } from "../../utilidades/graficos";
@@ -92,14 +93,18 @@ export default function Anulaciones() {
         </label>
         <label>
           Estado
-          <select value={estado} onChange={cambiarFiltro(setEstado)}>
-            <option value="">Todos</option>
-            {Object.entries(ETIQUETA_ESTADO).map(([valor, etiqueta]) => (
-              <option key={valor} value={valor}>
-                {etiqueta}
-              </option>
-            ))}
-          </select>
+          <SelectEstilizado
+            etiqueta="Estado"
+            value={estado}
+            onChange={(valor) => {
+              setPagina(1);
+              setEstado(valor);
+            }}
+            opciones={[
+              { valor: "", etiqueta: "Todos" },
+              ...Object.entries(ETIQUETA_ESTADO).map(([valor, etiqueta]) => ({ valor, etiqueta })),
+            ]}
+          />
         </label>
       </div>
 

@@ -21,6 +21,7 @@ from app.schemas import (
     EstadoArca,
     MedioPago,
     Pagina,
+    PaginaConTotalMonto,
     VentaAnularIn,
     VentaCrear,
     VentaFiscalOut,
@@ -183,7 +184,7 @@ def crear_venta(
     return _respuesta_venta(venta, usuario)
 
 
-@router.get("", response_model=Pagina[VentaOut], dependencies=[Depends(requerir_admin)])
+@router.get("", response_model=PaginaConTotalMonto[VentaOut], dependencies=[Depends(requerir_admin)])
 def listar_ventas(
     desde: date | None = None,
     hasta: date | None = None,
@@ -210,6 +211,12 @@ def listar_ventas(
         condiciones.append(Venta.vendedor_id == vendedor_id)
 
     total = db.scalar(select(func.count()).select_from(Venta).where(*condiciones))
+    # Una venta anulada no cuenta como vendida (mismo criterio que el resumen).
+    total_monto = db.scalar(
+        select(func.coalesce(func.sum(Venta.total), 0))
+        .select_from(Venta)
+        .where(*condiciones, Venta.anulada.is_(False))
+    )
     ventas = db.scalars(
         select(Venta)
         .where(*condiciones)
@@ -217,7 +224,13 @@ def listar_ventas(
         .limit(por_pagina)
         .offset((pagina - 1) * por_pagina)
     ).all()
-    return {"items": ventas, "total": total, "pagina": pagina, "por_pagina": por_pagina}
+    return {
+        "items": ventas,
+        "total": total,
+        "pagina": pagina,
+        "por_pagina": por_pagina,
+        "total_monto": total_monto,
+    }
 
 
 @router.get("/{venta_id}", response_model=VentaOut, dependencies=[Depends(requerir_admin)])

@@ -48,6 +48,35 @@
   }
 }
 
+.ventas-total-filtrado {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.ventas-total-filtrado-etiqueta {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.ventas-total-filtrado-monto {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+.ventas-total-filtrado-cantidad {
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
 .ventas-tabla {
   background: var(--color-superficie);
   border: 1px solid var(--color-borde);

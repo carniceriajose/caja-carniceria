@@ -7,6 +7,7 @@ import TarjetasConfiguracion from "./TarjetasConfiguracion";
 import RubrosConfiguracion from "./RubrosConfiguracion";
 import { formatearCuit } from "../../utilidades/fechas";
 import { IconoComercio, IconoDocumento, IconoEngranaje, IconoTransferencia } from "../../componentes/Iconos";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import "./Configuracion.css";
 
 // Los campos que se mandan en el PUT (todo lo de ConfiguracionIn, nunca el CUIT).
@@ -201,14 +202,16 @@ export default function Configuracion() {
             <div className="configuracion-fila">
               <label>
                 Tipo de comprobante
-                <select
+                <SelectEstilizado
+                  etiqueta="Tipo de comprobante"
                   value={formulario.tipo_comprobante}
-                  onChange={(e) => cambiar("tipo_comprobante", e.target.value)}
+                  onChange={(valor) => cambiar("tipo_comprobante", valor)}
                   disabled={guardando}
-                >
-                  <option value={11}>Factura C</option>
-                  <option value={6}>Factura B</option>
-                </select>
+                  opciones={[
+                    { valor: 11, etiqueta: "Factura C" },
+                    { valor: 6, etiqueta: "Factura B" },
+                  ]}
+                />
               </label>
               <label>
                 Punto de venta

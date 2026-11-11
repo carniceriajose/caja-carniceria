@@ -5,6 +5,7 @@ contesta a tiempo. No sabe nada de HTTP ni de FastAPI.
 
 import logging
 import threading
+import time
 from contextlib import contextmanager
 from datetime import date as Fecha
 from decimal import ROUND_HALF_UP, Decimal
@@ -14,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.arca import wsaa, wsfe
 from app.auditoria import registrar as registrar_auditoria
+from app.config import get_settings
 from app.configuracion import obtener_configuracion
 from app.fechas import hoy_argentina
 from app.models import Anulacion, Venta
@@ -168,12 +170,22 @@ def emitir_factura(db: Session, venta: Venta) -> None:
     """Un solo intento de facturar `venta`. Si algo queda sin resolver (sin
     certificado, ARCA caído, o un timeout que ni FECompConsultar aclara), la
     venta se deja "pendiente" tal cual estaba: el reintento automático la
-    vuelve a intentar en el próximo ciclo. Nunca propaga la excepción."""
+    vuelve a intentar en el próximo ciclo. Nunca propaga la excepción.
+
+    Los logs de acá son solo diagnóstico (id de venta, CUIT, punto de venta,
+    tipo/número, duración, tipo de excepción): nunca token, sign, clave
+    privada ni certificado."""
+    inicio = time.monotonic()
+    cuit = get_settings().arca_cuit
+    logger.info("ARCA: empieza a emitir venta=%s cuit=%s.", venta.id, cuit)
+
     if not wsaa.hay_certificado_configurado():
+        logger.warning("ARCA: no hay certificado configurado (venta=%s).", venta.id)
         return
 
     ticket = wsaa.obtener_o_renovar_ticket(db)
     if ticket is None:
+        logger.warning("ARCA: no se pudo obtener el ticket de acceso (venta=%s, cuit=%s).", venta.id, cuit)
         return
 
     configuracion = obtener_configuracion(db)
@@ -186,14 +198,26 @@ def emitir_factura(db: Session, venta: Venta) -> None:
     fecha = hoy_argentina().strftime("%Y%m%d")
 
     with _bloqueo_de_emision(db):
+        inicio_consulta = time.monotonic()
         try:
             numero = wsfe.consultar_ultimo_autorizado(ticket, punto_venta, tipo) + 1
-        except TimeoutError:
-            logger.warning("ARCA: no se pudo consultar el último comprobante autorizado; se reintenta luego.")
+        except TimeoutError as error:
+            logger.warning(
+                "ARCA: FECompUltimoAutorizado agotó el tiempo de espera (venta=%s, cuit=%s, "
+                "pto_vta=%s, tipo=%s, %.1fs, excepcion=%s): %s; se reintenta luego.",
+                venta.id, cuit, punto_venta, tipo, time.monotonic() - inicio_consulta, type(error).__name__, error,
+            )
             return
         except Exception:
-            logger.exception("ARCA: FECompUltimoAutorizado falló.")
+            logger.exception(
+                "ARCA: FECompUltimoAutorizado falló (venta=%s, cuit=%s, pto_vta=%s, tipo=%s, %.1fs).",
+                venta.id, cuit, punto_venta, tipo, time.monotonic() - inicio_consulta,
+            )
             return
+        logger.info(
+            "ARCA: FECompUltimoAutorizado OK (venta=%s, numero=%s, %.1fs).",
+            venta.id, numero, time.monotonic() - inicio_consulta,
+        )
 
         try:
             detalle = armar_detalle(numero, fecha, venta.total, neto, iva, tipo, alicuota)
@@ -203,21 +227,37 @@ def emitir_factura(db: Session, venta: Venta) -> None:
             db.commit()
             return
 
+        inicio_solicitud = time.monotonic()
         try:
             respuesta = wsfe.solicitar_cae(ticket, punto_venta, tipo, detalle)
             resultado = _normalizar_respuesta_solicitud(respuesta)
-        except TimeoutError:
+        except TimeoutError as error:
+            logger.warning(
+                "ARCA: FECAESolicitar agotó el tiempo de espera (venta=%s, cuit=%s, pto_vta=%s, "
+                "tipo=%s, numero=%s, %.1fs, excepcion=%s): %s",
+                venta.id, cuit, punto_venta, tipo, numero, time.monotonic() - inicio_solicitud,
+                type(error).__name__, error,
+            )
             resultado = _resolver_tras_timeout(ticket, punto_venta, tipo, numero)
             if resultado is None:
                 logger.warning(
-                    "ARCA: no llegó respuesta al pedir el CAE del comprobante %s y todavía no está "
-                    "autorizado; se reintenta en el próximo ciclo.",
-                    numero,
+                    "ARCA: no llegó respuesta al pedir el CAE del comprobante %s (venta=%s) y todavía "
+                    "no está autorizado; se reintenta en el próximo ciclo.",
+                    numero, venta.id,
                 )
                 return
         except Exception:
-            logger.exception("ARCA: FECAESolicitar falló.")
+            logger.exception(
+                "ARCA: FECAESolicitar falló (venta=%s, cuit=%s, pto_vta=%s, tipo=%s, numero=%s, %.1fs).",
+                venta.id, cuit, punto_venta, tipo, numero, time.monotonic() - inicio_solicitud,
+            )
             return
+
+        logger.info(
+            "ARCA: FECAESolicitar respondió (venta=%s, numero=%s, aprobado=%s, motivo=%s, %.1fs, total=%.1fs).",
+            venta.id, numero, resultado.get("aprobado"), resultado.get("motivo") or "-",
+            time.monotonic() - inicio_solicitud, time.monotonic() - inicio,
+        )
 
         _guardar_resultado(db, venta, tipo, punto_venta, alicuota, numero, resultado)
 

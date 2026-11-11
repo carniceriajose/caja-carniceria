@@ -4,6 +4,7 @@ import { api } from "../../api/cliente";
 import Cargando from "../../componentes/Cargando";
 import Insignia, { ETIQUETA_ESTADO } from "../../componentes/Insignia";
 import MensajeError from "../../componentes/MensajeError";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import { formatearDinero } from "../../utilidades/dinero";
 import { hoyArgentina, rangosRapidos, formatearFechaHora } from "../../utilidades/fechas";
 import { formatearNumeroComprobante } from "../../utilidades/comprobante";
@@ -114,27 +115,43 @@ export default function Ventas() {
         </label>
         <label>
           Medio de pago
-          <select value={medio} onChange={cambiarFiltro(setMedio)}>
-            <option value="">Todos</option>
-            {Object.entries(ETIQUETA_MEDIO).map(([valor, etiqueta]) => (
-              <option key={valor} value={valor}>
-                {etiqueta}
-              </option>
-            ))}
-          </select>
+          <SelectEstilizado
+            etiqueta="Medio de pago"
+            value={medio}
+            onChange={(valor) => {
+              setPagina(1);
+              setMedio(valor);
+            }}
+            opciones={[
+              { valor: "", etiqueta: "Todos" },
+              ...Object.entries(ETIQUETA_MEDIO).map(([valor, etiqueta]) => ({ valor, etiqueta })),
+            ]}
+          />
         </label>
         <label>
           Estado fiscal
-          <select value={estado} onChange={cambiarFiltro(setEstado)}>
-            <option value="">Todos</option>
-            {Object.entries(ETIQUETA_ESTADO).map(([valor, etiqueta]) => (
-              <option key={valor} value={valor}>
-                {etiqueta}
-              </option>
-            ))}
-          </select>
+          <SelectEstilizado
+            etiqueta="Estado fiscal"
+            value={estado}
+            onChange={(valor) => {
+              setPagina(1);
+              setEstado(valor);
+            }}
+            opciones={[
+              { valor: "", etiqueta: "Todos" },
+              ...Object.entries(ETIQUETA_ESTADO).map(([valor, etiqueta]) => ({ valor, etiqueta })),
+            ]}
+          />
         </label>
       </div>
+
+      {!rangoInvertido && !cargando && !error && datos && (
+        <div className="ventas-total-filtrado">
+          <span className="ventas-total-filtrado-etiqueta">Total vendido (según filtro)</span>
+          <span className="ventas-total-filtrado-monto">{formatearDinero(datos.total_monto)}</span>
+          <span className="ventas-total-filtrado-cantidad">{datos.total} venta{datos.total === 1 ? "" : "s"}</span>
+        </div>
+      )}
 
       {rangoInvertido && <MensajeError mensaje="La fecha 'desde' no puede ser posterior a 'hasta'." />}
       {!rangoInvertido && cargando && <Cargando texto="Cargando ventas…" />}

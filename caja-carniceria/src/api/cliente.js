@@ -149,3 +149,28 @@ export async function descargarArchivo(ruta, nombrePorDefecto) {
   enlace.remove();
   URL.revokeObjectURL(url);
 }
+
+// Para mostrar una imagen protegida (como <img src>): el navegador no manda
+// el token en un <img> normal, así que se trae como blob y se arma una URL
+// local. Quien la use tiene que revocarla (URL.revokeObjectURL) al desmontar.
+export async function obtenerImagenComoUrl(ruta) {
+  const encabezados = {};
+  const token = obtenerToken();
+  if (token) encabezados["Authorization"] = `Bearer ${token}`;
+
+  let respuesta;
+  try {
+    respuesta = await fetch(`${URL_BASE}${ruta}`, { headers: encabezados });
+  } catch {
+    throw new ErrorApi("No se pudo conectar con el servidor. Revisá tu conexión.", 0);
+  }
+  if (!respuesta.ok) {
+    if (respuesta.status === 401) {
+      borrarToken();
+      alVencerLaSesion();
+    }
+    throw new ErrorApi("No se pudo cargar la imagen.", respuesta.status);
+  }
+  const blob = await respuesta.blob();
+  return URL.createObjectURL(blob);
+}

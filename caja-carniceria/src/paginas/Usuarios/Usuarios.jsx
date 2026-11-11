@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
 import TituloSeccion from "../../componentes/TituloSeccion";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import { IconoUsuarios } from "../../componentes/Iconos";
 import SeguridadPropia from "./SeguridadPropia";
 import "./Usuarios.css";
@@ -188,15 +189,17 @@ export default function Usuarios() {
             )}
             <label>
               Rol
-              <select
+              <SelectEstilizado
+                etiqueta="Rol"
                 value={formulario.rol}
-                onChange={(e) => setFormulario({ ...formulario, rol: e.target.value })}
+                onChange={(valor) => setFormulario({ ...formulario, rol: valor })}
                 disabled={guardando || (editandoId === propio?.id)}
                 title={editandoId === propio?.id ? "No podés cambiar tu propio rol." : undefined}
-              >
-                <option value="vendedor">Vendedor</option>
-                <option value="admin">Admin</option>
-              </select>
+                opciones={[
+                  { valor: "vendedor", etiqueta: "Vendedor" },
+                  { valor: "admin", etiqueta: "Admin" },
+                ]}
+              />
             </label>
           </div>
           <div className="usuarios-formulario-botones">

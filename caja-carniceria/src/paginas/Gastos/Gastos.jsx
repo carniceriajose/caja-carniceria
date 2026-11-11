@@ -5,8 +5,9 @@ import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
 import TituloSeccion from "../../componentes/TituloSeccion";
 import { IconoCategorias, IconoDinero, IconoReloj } from "../../componentes/Iconos";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import { formatearDinero, totalValido } from "../../utilidades/dinero";
-import { hoyArgentina } from "../../utilidades/fechas";
+import { formatearFecha, hoyArgentina } from "../../utilidades/fechas";
 import "./Gastos.css";
 
 const POR_PAGINA = 15;
@@ -229,19 +230,19 @@ export default function Gastos() {
             </label>
             <label>
               Categoría
-              <select
+              <SelectEstilizado
+                etiqueta="Categoría"
                 value={formulario.categoria_id}
-                onChange={(e) => setFormulario({ ...formulario, categoria_id: e.target.value })}
+                onChange={(valor) => setFormulario({ ...formulario, categoria_id: valor })}
                 disabled={guardando || !categorias?.length}
-                required
-              >
-                <option value="">Elegir…</option>
-                {categorias?.map((categoria) => (
-                  <option key={categoria.id} value={categoria.id}>
-                    {categoria.nombre}
-                  </option>
-                ))}
-              </select>
+                opciones={[
+                  { valor: "", etiqueta: "Elegir…" },
+                  ...(categorias ?? []).map((categoria) => ({
+                    valor: String(categoria.id),
+                    etiqueta: categoria.nombre,
+                  })),
+                ]}
+              />
             </label>
           </div>
           <label>
@@ -280,14 +281,21 @@ export default function Gastos() {
           </label>
           <label>
             Categoría
-            <select value={filtroCategoria} onChange={(e) => { setPagina(1); setFiltroCategoria(e.target.value); }}>
-              <option value="">Todas</option>
-              {categorias?.map((categoria) => (
-                <option key={categoria.id} value={categoria.id}>
-                  {categoria.nombre}
-                </option>
-              ))}
-            </select>
+            <SelectEstilizado
+              etiqueta="Categoría"
+              value={filtroCategoria}
+              onChange={(valor) => {
+                setPagina(1);
+                setFiltroCategoria(valor);
+              }}
+              opciones={[
+                { valor: "", etiqueta: "Todas" },
+                ...(categorias ?? []).map((categoria) => ({
+                  valor: String(categoria.id),
+                  etiqueta: categoria.nombre,
+                })),
+              ]}
+            />
           </label>
           <button
             type="button"
@@ -318,42 +326,44 @@ export default function Gastos() {
 
         {!rangoInvertido && !cargandoGastos && !errorGastos && gastos && (
           <>
-            <table>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Categoría</th>
-                  <th>Descripción</th>
-                  <th className="gastos-numerico">Monto</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {gastos.items.length === 0 && (
+            <div className="gastos-tabla tabla-apilable">
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={5} className="gastos-vacio">
-                      No hay gastos en este período.
-                    </td>
+                    <th>Fecha</th>
+                    <th>Categoría</th>
+                    <th>Descripción</th>
+                    <th className="gastos-numerico">Monto</th>
+                    <th></th>
                   </tr>
-                )}
-                {gastos.items.map((gasto) => (
-                  <tr key={gasto.id}>
-                    <td>{gasto.fecha}</td>
-                    <td>{gasto.categoria.nombre}</td>
-                    <td>{gasto.descripcion || "—"}</td>
-                    <td className="gastos-numerico">{formatearDinero(gasto.monto)}</td>
-                    <td className="gastos-acciones">
-                      <button type="button" onClick={() => empezarEdicion(gasto)}>
-                        Editar
-                      </button>
-                      <button type="button" className="gastos-boton-borrar" onClick={() => alBorrar(gasto)}>
-                        Borrar
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {gastos.items.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="gastos-vacio">
+                        No hay gastos en este período.
+                      </td>
+                    </tr>
+                  )}
+                  {gastos.items.map((gasto) => (
+                    <tr key={gasto.id}>
+                      <td data-label="Fecha">{formatearFecha(gasto.fecha)}</td>
+                      <td data-label="Categoría">{gasto.categoria.nombre}</td>
+                      <td data-label="Descripción">{gasto.descripcion || "—"}</td>
+                      <td data-label="Monto" className="gastos-numerico">{formatearDinero(gasto.monto)}</td>
+                      <td data-label="" className="gastos-acciones">
+                        <button type="button" onClick={() => empezarEdicion(gasto)}>
+                          Editar
+                        </button>
+                        <button type="button" className="gastos-boton-borrar" onClick={() => alBorrar(gasto)}>
+                          Borrar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
             {totalPaginas > 1 && (
               <div className="gastos-paginado">

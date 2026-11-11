@@ -1,0 +1,316 @@
+.compras h1 {
+  color: var(--color-primario-oscuro);
+}
+
+.compras-seccion {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.compras-ayuda {
+  margin: -0.5rem 0 1rem;
+  color: var(--color-texto-suave);
+  font-size: 0.85rem;
+}
+
+.compras-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.compras-formulario-fila {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.compras-formulario label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+  flex: 1;
+  min-width: 160px;
+}
+
+.compras-formulario input {
+  padding: 0.55rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.compras-campo-imagen input {
+  padding: 0.3rem 0;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-campo-imagen input::file-selector-button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.55rem 1rem;
+  margin-right: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.compras-campo-imagen input::file-selector-button:hover {
+  background: var(--color-primario-oscuro);
+}
+
+.compras-vista-previa {
+  max-width: 220px;
+}
+
+.compras-vista-previa img {
+  width: 100%;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-borde);
+}
+
+.compras-formulario-botones {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.compras-formulario-botones button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.compras-formulario-botones button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.compras-formulario-botones button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.compras-boton-secundario {
+  background: transparent !important;
+  color: var(--color-texto) !important;
+  border: 1px solid var(--color-borde) !important;
+}
+
+.compras-filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.compras-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-filtros input {
+  padding: 0.4rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+}
+
+.compras-vacio {
+  text-align: center;
+  color: var(--color-texto-suave);
+}
+
+.compras-comentarios {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.6rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.compras-comentarios-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.compras-comentarios-form input {
+  flex: 1;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+}
+
+.compras-comentarios-form button {
+  background: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.compras-comentarios-form button:hover:not(:disabled) {
+  background: var(--color-primario-oscuro);
+}
+
+.compras-comentarios-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.compras-comentarios-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.compras-comentarios-lista li {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.5rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.compras-comentarios-lista p {
+  margin: 0 0 0.4rem;
+  font-size: 0.92rem;
+  white-space: pre-wrap;
+}
+
+.compras-comentarios-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-comentarios-pie button {
+  background: transparent;
+  border: none;
+  color: var(--color-error-texto);
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 0;
+}
+
+.compras-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 1rem;
+}
+
+.compras-tarjeta {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--color-fondo);
+}
+
+.compras-miniatura {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  background: var(--color-superficie);
+}
+
+.compras-miniatura-vacia {
+  display: grid;
+  place-items: center;
+  color: var(--color-texto-suave);
+}
+
+.compras-tarjeta-datos {
+  padding: 0.6rem 0.7rem 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.compras-tarjeta-comercio {
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.compras-tarjeta-fecha {
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-tarjeta-descripcion {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-tarjeta-acciones {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem 0.7rem;
+  margin-top: auto;
+}
+
+.compras-tarjeta-acciones button {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.compras-boton-borrar {
+  color: var(--color-error-texto);
+  border-color: var(--color-error-borde) !important;
+}
+
+.compras-boton-borrar:hover {
+  background: var(--color-error-fondo);
+}
+
+.compras-paginado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.compras-paginado button {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.compras-paginado button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

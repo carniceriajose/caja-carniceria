@@ -12,6 +12,28 @@
   overflow-x: auto;
 }
 
+.gastos-tabla {
+  overflow-x: auto;
+}
+
+.gastos-tabla table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gastos-tabla th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.gastos-tabla td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
 .gastos-seccion h2 {
   font-size: 1rem;
   color: var(--color-primario-oscuro);

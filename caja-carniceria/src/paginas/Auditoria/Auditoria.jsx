@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { api } from "../../api/cliente";
 import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
+import SelectEstilizado from "../../componentes/SelectEstilizado";
 import { formatearFechaHora, hoyArgentina } from "../../utilidades/fechas";
 import "./Auditoria.css";
 
@@ -122,25 +123,33 @@ export default function Auditoria() {
         </label>
         <label>
           Acción
-          <select value={accion} onChange={cambiarFiltro(setAccion)}>
-            <option value="">Todas</option>
-            {Object.entries(ETIQUETA_ACCION).map(([valor, etiqueta]) => (
-              <option key={valor} value={valor}>
-                {etiqueta}
-              </option>
-            ))}
-          </select>
+          <SelectEstilizado
+            etiqueta="Acción"
+            value={accion}
+            onChange={(valor) => {
+              setPagina(1);
+              setAccion(valor);
+            }}
+            opciones={[
+              { valor: "", etiqueta: "Todas" },
+              ...Object.entries(ETIQUETA_ACCION).map(([valor, etiqueta]) => ({ valor, etiqueta })),
+            ]}
+          />
         </label>
         <label>
           Usuario
-          <select value={usuarioId} onChange={cambiarFiltro(setUsuarioId)}>
-            <option value="">Todos</option>
-            {usuarios.map((u) => (
-              <option key={u.id} value={u.id}>
-                {u.nombre}
-              </option>
-            ))}
-          </select>
+          <SelectEstilizado
+            etiqueta="Usuario"
+            value={usuarioId}
+            onChange={(valor) => {
+              setPagina(1);
+              setUsuarioId(valor);
+            }}
+            opciones={[
+              { valor: "", etiqueta: "Todos" },
+              ...usuarios.map((u) => ({ valor: String(u.id), etiqueta: u.nombre })),
+            ]}
+          />
         </label>
       </div>
 

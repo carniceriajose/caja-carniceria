@@ -126,28 +126,38 @@ def _parsear_login_ticket_response(xml_texto: str) -> TicketInfo:
     return TicketInfo(token=token, sign=sign, vence_en=vence_en)
 
 
-def _leer_ticket_guardado(db: Session, servicio: str) -> TicketAcceso | None:
-    return db.scalar(select(TicketAcceso).where(TicketAcceso.servicio == servicio))
+def _leer_ticket_guardado(db: Session, servicio: str, entorno: str, cuit: str) -> TicketAcceso | None:
+    return db.scalar(
+        select(TicketAcceso).where(
+            TicketAcceso.servicio == servicio,
+            TicketAcceso.entorno == entorno,
+            TicketAcceso.cuit == cuit,
+        )
+    )
 
 
-def _guardar_ticket(db: Session, servicio: str, info: TicketInfo) -> None:
-    fila = _leer_ticket_guardado(db, servicio)
+def _guardar_ticket(db: Session, servicio: str, entorno: str, cuit: str, info: TicketInfo) -> None:
+    fila = _leer_ticket_guardado(db, servicio, entorno, cuit)
     if fila is None:
-        fila = TicketAcceso(servicio=servicio)
+        fila = TicketAcceso(servicio=servicio, entorno=entorno, cuit=cuit)
         db.add(fila)
     fila.token = info.token
     fila.sign = info.sign
     fila.vence_en = info.vence_en
+    fila.generado_en = datetime.now(timezone.utc)
     db.commit()
 
 
 def obtener_o_renovar_ticket(db: Session, servicio: str = "wsfe") -> TicketInfo | None:
     """Devuelve un ticket vigente, reutilizando el guardado si todavía le
-    quedan más de 10 minutos. Si hay que renovarlo y algo falla (sin
+    quedan más de 10 minutos y es del mismo entorno y CUIT configurados
+    ahora mismo (si se cambió cualquiera de los dos, se pide uno nuevo, no
+    se reutiliza el de otro entorno). Si hay que renovarlo y algo falla (sin
     certificado, ARCA caído, o ARCA dice que ya hay uno vigente), no
     reintenta en loop: registra el motivo y devuelve None para que el que
     llama lo intente de nuevo en el próximo ciclo."""
-    fila = _leer_ticket_guardado(db, servicio)
+    settings = get_settings()
+    fila = _leer_ticket_guardado(db, servicio, settings.arca_entorno, settings.arca_cuit)
     if fila is not None:
         vence_en = fila.vence_en if fila.vence_en.tzinfo else fila.vence_en.replace(tzinfo=timezone.utc)
         if vence_en - datetime.now(timezone.utc) > MARGEN_RENOVACION:
@@ -166,14 +176,25 @@ def obtener_o_renovar_ticket(db: Session, servicio: str = "wsfe") -> TicketInfo 
     except Fault as error:
         if "ya posee un ta valido" in str(error).lower():
             logger.warning(
-                "ARCA (WSAA): ya existe un ticket de acceso vigente en AFIP; se espera al próximo ciclo."
+                "ARCA (WSAA): ya existe un ticket de acceso vigente en AFIP (entorno=%s, cuit=%s); se espera al próximo ciclo.",
+                settings.arca_entorno,
+                settings.arca_cuit,
             )
         else:
-            logger.error("ARCA (WSAA): ARCA rechazó el pedido de ticket de acceso: %s", error)
+            logger.error(
+                "ARCA (WSAA): ARCA rechazó el pedido de ticket de acceso (entorno=%s, cuit=%s): %s",
+                settings.arca_entorno,
+                settings.arca_cuit,
+                error,
+            )
         return None
     except Exception:  # noqa: BLE001 - cualquier falla de red, XML o firma
-        logger.exception("ARCA (WSAA): no se pudo obtener el ticket de acceso.")
+        logger.exception(
+            "ARCA (WSAA): no se pudo obtener el ticket de acceso (entorno=%s, cuit=%s).",
+            settings.arca_entorno,
+            settings.arca_cuit,
+        )
         return None
 
-    _guardar_ticket(db, servicio, info)
+    _guardar_ticket(db, servicio, settings.arca_entorno, settings.arca_cuit, info)
     return info

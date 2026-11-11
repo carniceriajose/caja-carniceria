@@ -20,6 +20,8 @@ from app.routers import (
     auditoria,
     auth,
     cierres,
+    comentarios_comercio,
+    compras,
     configuracion,
     gastos,
     reportes,
@@ -129,3 +131,5 @@ app.include_router(cierres.router)
 app.include_router(reportes.router)
 app.include_router(tarjetas.router)
 app.include_router(rubros.router)
+app.include_router(compras.router)
+app.include_router(comentarios_comercio.router)

@@ -208,3 +208,19 @@ export const IconoPapelera = (props) => (
     <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
   </Icono>
 );
+
+export const IconoCompras = (props) => (
+  <Icono {...props}>
+    <path d="M6 2 3 7v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7l-3-5Z" />
+    <path d="M3 7h18" />
+    <path d="M16 11a4 4 0 0 1-8 0" />
+  </Icono>
+);
+
+export const IconoImagen = (props) => (
+  <Icono {...props}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <path d="m21 15-5-5L5 21" />
+  </Icono>
+);

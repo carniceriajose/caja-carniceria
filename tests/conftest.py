@@ -8,6 +8,9 @@ os.environ["CORS_ORIGENES"] = "http://localhost:5173"
 os.environ["JWT_MINUTOS_ADMIN"] = "120"
 os.environ["JWT_MINUTOS_VENDEDOR"] = "720"
 os.environ["ARCA_TAREAS_DE_FONDO"] = "false"
+# Explícito acá (no solo el default): los tests no tienen que depender de lo
+# que diga el .env real de la máquina de quien los corre.
+os.environ["ARCA_ENTORNO"] = "homologacion"
 os.environ["ARCA_CUIT"] = "20000000001"
 os.environ["ARCA_PUNTO_VENTA"] = "1"
 os.environ["ARCA_TIPO_COMPROBANTE"] = "11"
