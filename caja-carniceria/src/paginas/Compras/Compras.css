@@ -50,7 +50,14 @@
 .compras-descripcion {
   resize: vertical;
   font-family: inherit;
-  min-height: 5.5rem;
+  min-height: 8rem;
+}
+
+.compras-descripcion-ayuda {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--color-texto-suave);
 }
 
 .compras-campo-imagen input {

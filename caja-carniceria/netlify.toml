@@ -8,3 +8,27 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# El navegador siempre tiene que volver a preguntarle al servidor por estos
+# archivos (son los que anuncian que hay una versión nueva); los que llevan
+# un hash en el nombre (/assets/*) no cambian nunca de contenido una vez
+# publicados, así que esos sí se pueden cachear para siempre.
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

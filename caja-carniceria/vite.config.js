@@ -3,10 +3,27 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  define: {
+    // Se usa como "número de versión" en Configuración: con esto alcanza para
+    // saber qué build tiene cargado José cuando avisa que algo no anda.
+    __FECHA_BUILD__: JSON.stringify(
+      new Date().toLocaleString("es-AR", {
+        timeZone: "America/Argentina/Buenos_Aires",
+        dateStyle: "short",
+        timeStyle: "short",
+      })
+    ),
+  },
   plugins: [
     react(),
     VitePWA({
-      registerType: "autoUpdate",
+      // "prompt": el service worker nuevo se instala pero se queda esperando
+      // en vez de tomar el control solo. Como la caja queda con la pestaña
+      // abierta todo el día, si se actualizara sola podría cortar una venta a
+      // medio cargar. En vez de eso, el aviso de ActualizacionDisponible deja
+      // que decida la persona cuándo recargar.
+      registerType: "prompt",
+      injectRegister: false,
       includeAssets: ["favicon.png", "favicon-32.png"],
       manifest: {
         name: "El Abasto de José",
@@ -32,6 +49,16 @@ export default defineConfig({
         // así que los datos de ventas/resumen siempre se piden en vivo.
         globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
         navigateFallbackDenylist: [/^\/auth\//],
+        // Borra del Cache Storage las versiones de caché de builds anteriores
+        // apenas el service worker nuevo toma el control.
+        cleanupOutdatedCaches: true,
+        // El service worker nuevo se queda "esperando" hasta que la persona
+        // confirma la actualización (ver ActualizacionDisponible.jsx), pero
+        // una vez que lo confirma necesita tomar control de la pestaña ya
+        // abierta de inmediato para que la recarga lo use; sin esto se
+        // quedaría esperando a una pestaña nueva que, en la caja, puede no
+        // llegar nunca porque la pestaña queda abierta todo el día.
+        clientsClaim: true,
       },
       devOptions: {
         enabled: false,

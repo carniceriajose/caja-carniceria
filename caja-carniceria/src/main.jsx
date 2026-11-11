@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { DatosProvider } from "./context/DatosContext.jsx";
+import ActualizacionDisponible from "./componentes/ActualizacionDisponible.jsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -15,5 +16,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </DatosProvider>
       </AuthProvider>
     </BrowserRouter>
+    <ActualizacionDisponible />
   </React.StrictMode>
 );

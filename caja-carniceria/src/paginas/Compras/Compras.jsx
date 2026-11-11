@@ -13,6 +13,7 @@ const CALIDAD_JPEG = 0.72;
 
 const FORMULARIO_VACIO = { fecha: hoyArgentina(), nombre_comercio: "", descripcion: "" };
 
+
 // Achica la foto en el navegador (más liviana para subir y para guardar) y la
 // deja siempre en JPEG, sin importar el formato original.
 function comprimirImagen(archivo) {
@@ -361,10 +362,10 @@ export default function Compras() {
             ))}
           </datalist>
           <label>
-            Descripción (opcional)
+            Observaciones y detalles (opcional)
             <textarea
               className="compras-descripcion"
-              rows={4}
+              rows={6}
               value={formulario.descripcion}
               onChange={(e) => setFormulario({ ...formulario, descripcion: e.target.value })}
               disabled={guardando}

@@ -223,6 +223,13 @@ export const IconoComentario = (props) => (
   </Icono>
 );
 
+export const IconoActualizar = (props) => (
+  <Icono {...props}>
+    <path d="M21 12a9 9 0 1 1-3-6.7" />
+    <polyline points="21 3 21 9 15 9" />
+  </Icono>
+);
+
 export const IconoImagen = (props) => (
   <Icono {...props}>
     <rect x="3" y="3" width="18" height="18" rx="2" />

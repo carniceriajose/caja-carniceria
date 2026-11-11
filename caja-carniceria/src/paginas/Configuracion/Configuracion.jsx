@@ -88,6 +88,7 @@ export default function Configuracion() {
   return (
     <div className="configuracion">
       <h1>Configuración</h1>
+      <p className="configuracion-version">Versión: {__FECHA_BUILD__}</p>
 
       {cargando && <Cargando texto="Cargando configuración…" />}
       {!cargando && error && <MensajeError mensaje={error} onReintentar={cargar} />}

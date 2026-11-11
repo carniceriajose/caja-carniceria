@@ -6,6 +6,7 @@ import { useDatos } from "../../context/DatosContext";
 import Cargando from "../../componentes/Cargando";
 import MensajeError from "../../componentes/MensajeError";
 import TicketComprobante from "../../componentes/TicketComprobante";
+import { marcarVentaEnCurso } from "../../utilidades/estadoVenta";
 import {
   IconoBilletes,
   IconoBorrar,
@@ -102,6 +103,11 @@ export default function Venta() {
   const [errorComprobante, setErrorComprobante] = useState("");
   const [comprobanteAgotado, setComprobanteAgotado] = useState(false);
   const [recientes, setRecientes] = useState([]);
+
+  useEffect(() => {
+    marcarVentaEnCurso(subtotal.trim() !== "" && !ventaConfirmada);
+    return () => marcarVentaEnCurso(false);
+  }, [subtotal, ventaConfirmada]);
 
   const [mostrarAnular, setMostrarAnular] = useState(false);
   const [motivoAnular, setMotivoAnular] = useState("");
