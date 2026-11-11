@@ -49,15 +49,15 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  min-width: 220px;
+  gap: 0.6rem;
+  min-width: 280px;
 }
 
 .grafico-dona-leyenda li {
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) auto auto;
+  grid-template-columns: 12px minmax(0, 1fr) minmax(100px, auto) minmax(2.5rem, auto);
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.9rem;
 }
 
 .grafico-dona-marca {
