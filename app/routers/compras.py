@@ -51,6 +51,18 @@ def listar_compras(
     return {"items": compras, "total": total, "pagina": pagina, "por_pagina": por_pagina}
 
 
+@router.get("/comercios", response_model=list[str])
+def listar_comercios(db: Session = Depends(get_db)):
+    """Nombres de comercio ya usados, uno por cada variante de mayúsculas/
+    minúsculas (para sugerir autocompletado y evitar duplicados como
+    "Salta Agro" y "salta agro")."""
+    return db.scalars(
+        select(func.max(Compra.nombre_comercio))
+        .group_by(func.lower(Compra.nombre_comercio))
+        .order_by(func.lower(Compra.nombre_comercio))
+    ).all()
+
+
 @router.get("/{compra_id}/imagen")
 def ver_imagen(compra_id: int, db: Session = Depends(get_db)):
     compra = _buscar_compra(db, compra_id)

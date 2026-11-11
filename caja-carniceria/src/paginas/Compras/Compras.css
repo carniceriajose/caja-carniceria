@@ -39,11 +39,18 @@
   min-width: 160px;
 }
 
-.compras-formulario input {
+.compras-formulario input,
+.compras-formulario textarea {
   padding: 0.55rem;
   border: 1px solid var(--color-borde);
   border-radius: 0.4rem;
   font-size: 0.95rem;
+}
+
+.compras-descripcion {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 5.5rem;
 }
 
 .compras-campo-imagen input {
@@ -100,12 +107,6 @@
 .compras-formulario-botones button:disabled {
   opacity: 0.6;
   cursor: default;
-}
-
-.compras-boton-secundario {
-  background: transparent !important;
-  color: var(--color-texto) !important;
-  border: 1px solid var(--color-borde) !important;
 }
 
 .compras-filtros {
@@ -216,27 +217,102 @@
   padding: 0;
 }
 
-.compras-grilla {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 1rem;
-}
-
-.compras-tarjeta {
+.compras-historial-lista {
   display: flex;
   flex-direction: column;
+  gap: 0.6rem;
+}
+
+.compras-fila {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
   border: 1px solid var(--color-borde);
   border-radius: 0.6rem;
-  overflow: hidden;
-  background: var(--color-fondo);
+  background: var(--color-superficie);
+  padding: 0.6rem 0.8rem;
+}
+
+.compras-miniatura-boton {
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
 }
 
 .compras-miniatura {
-  width: 100%;
-  height: 140px;
+  width: 56px;
+  height: 56px;
+  border-radius: 0.4rem;
   object-fit: cover;
   display: block;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+}
+
+.compras-lightbox-fondo {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 24, 40, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+}
+
+.compras-lightbox-caja {
   background: var(--color-superficie);
+  border-radius: var(--radio-tarjeta);
+  max-width: min(90vw, 700px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.compras-lightbox-barra {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.compras-lightbox-descargar {
+  background: var(--color-primario);
+  color: white;
+  border-radius: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.compras-lightbox-descargar:hover {
+  background: var(--color-primario-oscuro);
+}
+
+.compras-lightbox-barra button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-borde);
+  border-radius: 0.4rem;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  cursor: pointer;
+}
+
+.compras-lightbox-caja img {
+  max-width: 100%;
+  max-height: calc(90vh - 3rem);
+  object-fit: contain;
+  display: block;
 }
 
 .compras-miniatura-vacia {
@@ -245,53 +321,70 @@
   color: var(--color-texto-suave);
 }
 
-.compras-tarjeta-datos {
-  padding: 0.6rem 0.7rem 0.3rem;
+.compras-fila-datos {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.compras-tarjeta-comercio {
+.compras-fila-comercio {
   font-weight: 600;
   color: var(--color-texto);
 }
 
-.compras-tarjeta-fecha {
-  font-size: 0.8rem;
-  color: var(--color-texto-suave);
-}
-
-.compras-tarjeta-descripcion {
-  margin: 0.3rem 0 0;
+.compras-fila-meta {
   font-size: 0.85rem;
   color: var(--color-texto-suave);
+  white-space: pre-wrap;
 }
 
-.compras-tarjeta-acciones {
+.compras-fila-acciones {
   display: flex;
   gap: 0.5rem;
-  padding: 0.6rem 0.7rem;
-  margin-top: auto;
+  flex-shrink: 0;
 }
 
-.compras-tarjeta-acciones button {
-  flex: 1;
-  background: transparent;
+.compras-fila-acciones button {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: var(--color-fondo);
   border: 1px solid var(--color-borde);
   border-radius: 0.4rem;
-  padding: 0.3rem 0.5rem;
   cursor: pointer;
-  font-size: 0.8rem;
+  color: var(--color-texto-suave);
+}
+
+.compras-fila-acciones button:hover {
+  background: var(--color-borde);
 }
 
 .compras-boton-borrar {
-  color: var(--color-error-texto);
+  color: var(--color-error-texto) !important;
   border-color: var(--color-error-borde) !important;
 }
 
 .compras-boton-borrar:hover {
-  background: var(--color-error-fondo);
+  background: var(--color-error-fondo) !important;
+}
+
+@media (max-width: 640px) {
+  .compras-fila {
+    flex-wrap: wrap;
+  }
+
+  .compras-fila-datos {
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  .compras-fila-acciones {
+    order: 2;
+    margin-left: auto;
+  }
 }
 
 .compras-paginado {
